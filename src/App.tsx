@@ -10,7 +10,6 @@ import {
   CssBaseline,
   ThemeProvider,
   createTheme,
-  Alert,
 } from "@mui/material";
 import "./App.css";
 
@@ -44,8 +43,6 @@ function App() {
   const [score, setScore] = useState<string>("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [lastScore, setLastScore] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState(false);
-  // const [context, setContext] = useState<{ email: string } | null>(null);
 
   // Fetch context on mount
   const context = use(contextPromise);
@@ -58,11 +55,7 @@ function App() {
 
     setLastScore(score);
     setHasSubmitted(true);
-    setSuccessMessage(true);
     setScore("");
-
-    // Hide success message after 3 seconds
-    setTimeout(() => setSuccessMessage(false), 3000);
   };
 
   const handleUpdate = () => {
@@ -72,21 +65,13 @@ function App() {
     }
 
     setLastScore(score);
-    setSuccessMessage(true);
     setScore("");
-
-    // Hide success message after 3 seconds
-    setTimeout(() => setSuccessMessage(false), 3000);
   };
 
   const handleRemove = () => {
     setLastScore("");
     setHasSubmitted(false);
     setScore("");
-    setSuccessMessage(true);
-
-    // Hide success message after 3 seconds
-    setTimeout(() => setSuccessMessage(false), 3000);
   };
 
   const isScoreEmpty = score.trim() === "";
@@ -197,7 +182,7 @@ function App() {
                     letterSpacing: "0.5px",
                   }}
                 >
-                  Weekly Score to Submit
+                  YOUR SCORE FOR THE WEEK
                 </Typography>
                 <Typography
                   sx={{
@@ -216,7 +201,7 @@ function App() {
                     mt: 2,
                   }}
                 >
-                  Updates at end of week
+                  Will be submitted at the end of the week
                 </Typography>
               </CardContent>
             </Card>
@@ -319,50 +304,8 @@ function App() {
               )}
             </CardContent>
           </Card>
-
-          {/* Success Alert */}
-          {successMessage && (
-            <Alert
-              severity="success"
-              sx={{
-                mt: 2,
-                animation: "slideIn 0.3s ease-in-out",
-              }}
-            >
-              {hasSubmitted
-                ? "Score updated!"
-                : "Score submitted successfully!"}
-            </Alert>
-          )}
         </Box>
-
-        {/* Footer */}
-        <Typography
-          variant="caption"
-          sx={{
-            textAlign: "center",
-            color: "#999",
-            mt: 4,
-            position: "relative",
-            zIndex: 2,
-          }}
-        >
-          Updated weekly
-        </Typography>
       </Container>
-
-      <style>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </ThemeProvider>
   );
 }
