@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, use, Suspense } from "react";
 import {
   Container,
   TextField,
@@ -38,19 +38,17 @@ const fetchContext = async () => {
   return response.json();
 };
 
+const contextPromise = fetchContext();
+
 function App() {
   const [score, setScore] = useState<string>("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [lastScore, setLastScore] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState(false);
-  const [context, setContext] = useState<{ email: string } | null>(null);
+  // const [context, setContext] = useState<{ email: string } | null>(null);
 
   // Fetch context on mount
-  useEffect(() => {
-    fetchContext()
-      .then((data) => setContext(data))
-      .catch((error) => console.error("Failed to fetch context:", error));
-  }, []);
+  const context = use(contextPromise);
 
   const handleSubmit = () => {
     if (score.trim() === "") {
@@ -140,6 +138,21 @@ function App() {
               >
                 🎾Pickleball Score Tracker🎾
               </Typography>
+              <Suspense
+                fallback={
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      textAlign: "center",
+                      color: "#666",
+                      mb: 1,
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    Hello, {context?.email || "Player"}!
+                  </Typography>
+                }
+              ></Suspense>
               <Typography
                 variant="body2"
                 sx={{
