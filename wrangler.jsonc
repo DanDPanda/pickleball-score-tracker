@@ -9,7 +9,15 @@
 	"pages_build_output_dir": "./dist",
 	"observability": {
 		"enabled": true
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "pickleball_score_tracker_database",
+			"database_name": "pickleball-score-tracker-database",
+			"database_id": "5dc0e540-f384-486b-88b5-eb60049d8220",
+			"remote": true
+		}
+	]
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
