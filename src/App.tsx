@@ -1,4 +1,4 @@
-import { useState, use } from "react";
+import { useState, use, Suspense } from "react";
 import {
   Container,
   TextField,
@@ -45,8 +45,7 @@ function App() {
   const [successMessage, setSuccessMessage] = useState(false);
 
   // Use the context from the API call
-  const contextPromise = fetchContext();
-  const context = use(contextPromise);
+  const context = use(fetchContext());
 
   const handleSubmit = () => {
     if (score.trim() === "") {
@@ -136,17 +135,33 @@ function App() {
               >
                 🎾Pickleball Score Tracker🎾
               </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  textAlign: "center",
-                  color: "#666",
-                  mb: 1,
-                  fontSize: "0.9rem",
-                }}
+              <Suspense
+                fallback={
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      textAlign: "center",
+                      color: "#666",
+                      mb: 1,
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    Loading...
+                  </Typography>
+                }
               >
-                Hello, {context?.email || "Player"}!
-              </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    textAlign: "center",
+                    color: "#666",
+                    mb: 1,
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Hello, {context?.email || "Player"}!
+                </Typography>
+              </Suspense>
             </CardContent>
           </Card>
 
