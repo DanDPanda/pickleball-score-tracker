@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, use } from "react";
 import {
   Container,
   TextField,
@@ -29,11 +29,24 @@ const theme = createTheme({
   },
 });
 
+// API call to fetch context
+const fetchContext = async () => {
+  const response = await fetch("/api/context");
+  if (!response.ok) {
+    throw new Error("Failed to fetch context");
+  }
+  return response.json();
+};
+
 function App() {
   const [score, setScore] = useState<string>("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [lastScore, setLastScore] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState(false);
+
+  // Use the context from the API call
+  const contextPromise = fetchContext();
+  const context = use(contextPromise);
 
   const handleSubmit = () => {
     if (score.trim() === "") {
@@ -122,6 +135,17 @@ function App() {
                 }}
               >
                 🎾Pickleball Score Tracker🎾
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  textAlign: "center",
+                  color: "#666",
+                  mb: 1,
+                  fontSize: "0.9rem",
+                }}
+              >
+                Hello, {context?.email || "Player"}!
               </Typography>
             </CardContent>
           </Card>
