@@ -112,7 +112,7 @@ function App() {
           >
             <CardContent sx={{ py: 3, px: 3 }}>
               <Typography
-                variant="h5"
+                variant="h6"
                 component="h1"
                 sx={{
                   fontWeight: "bold",
@@ -211,7 +211,15 @@ function App() {
                 label="Enter Score"
                 type="number"
                 value={score}
-                onChange={(e) => setScore(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (
+                    value === "" ||
+                    (parseInt(value) <= 99 && parseInt(value) >= 0)
+                  ) {
+                    setScore(value);
+                  }
+                }}
                 onKeyPress={(e) => {
                   if (e.key === "Enter") {
                     if (hasSubmitted) {
@@ -228,7 +236,7 @@ function App() {
                   },
                 }}
                 placeholder="0"
-                inputProps={{ inputMode: "numeric", min: "0" }}
+                inputProps={{ inputMode: "numeric", min: "0", max: "99" }}
               />
 
               {/* Submit / Update Button */}
