@@ -1,4 +1,5 @@
 import { Card, CardContent, Typography } from "@mui/material";
+import { Suspense } from "react";
 
 interface HeaderProps {
   email: string | undefined;
@@ -26,17 +27,19 @@ export const Header = ({ email }: HeaderProps) => (
       >
         🎾 Pickleball Score Tracker 🎾
       </Typography>
-      <Typography
-        variant="body2"
-        sx={{
-          textAlign: "center",
-          color: "#666",
-          mb: 1,
-          fontSize: "0.9rem",
-        }}
-      >
-        Hello, {email || "Player"}!
-      </Typography>
+      <Suspense fallback={<></>}>
+        <Typography
+          variant="body2"
+          sx={{
+            textAlign: "center",
+            color: "#666",
+            mb: 1,
+            fontSize: "0.9rem",
+          }}
+        >
+          Hello, {email || "Player"}!
+        </Typography>
+      </Suspense>
     </CardContent>
   </Card>
 );

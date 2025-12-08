@@ -1,4 +1,4 @@
-import { useState, use, Suspense } from "react";
+import { useState, use } from "react";
 import { Container, Box, CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import { fetchContext } from "./api/context";
@@ -71,9 +71,7 @@ function App() {
             pointerEvents: "auto",
           }}
         >
-          <Suspense fallback={<div>Loading score...</div>}>
-            <Header email={context?.email} />
-          </Suspense>
+          <Header email={context?.email} />
           <ScoreDisplay score={lastScore} />
           <InputCard
             score={score}
