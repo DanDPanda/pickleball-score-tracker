@@ -14,10 +14,11 @@ const contextPromise = fetchContext();
 
 function App() {
   // Fetch context on mount
-  const { user, scores, weeks } = use<{
+  const { user, scores, weeks, users } = use<{
     user: User;
     scores: Score[];
     weeks: Week[];
+    users: User[];
   }>(contextPromise);
 
   const currentScore = scores.find(
@@ -83,7 +84,7 @@ function App() {
             pointerEvents: "auto",
           }}
         >
-          <Header user={user} scores={scores} />
+          <Header user={user} scores={scores} users={users} />
           <ScoreDisplay score={lastScore} weeks={weeks} />
           <InputCard
             score={score}

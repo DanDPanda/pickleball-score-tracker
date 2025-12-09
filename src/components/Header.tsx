@@ -1,18 +1,36 @@
-import { Card, CardContent, Typography, Box, Divider } from "@mui/material";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Divider,
+  Tabs,
+  Tab,
+} from "@mui/material";
 import type { Score } from "../types/score";
 import { PreviousWeeksTable } from "./PreviousWeeksTable";
+import { EveryonesScoresTable } from "./EveryonesScoresTable";
 import type { User } from "../types/user";
 
 interface HeaderProps {
   user: User | undefined;
   scores?: Score[];
+  users?: User[];
 }
 
-export const Header = ({ user, scores = [] }: HeaderProps) => {
+export const Header = ({ user, scores = [], users = [] }: HeaderProps) => {
+  const [tabValue, setTabValue] = useState(0);
+
   const previousScores = scores.filter((score) => !score.active);
   const userScores = previousScores.filter(
     (score) => score.userId === user?.userId
   );
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
   return (
     <Card
       sx={{
@@ -52,21 +70,30 @@ export const Header = ({ user, scores = [] }: HeaderProps) => {
         {scores.length > 0 && (
           <>
             <Divider sx={{ my: 2 }} />
-            <Typography
-              variant="caption"
-              sx={{
-                display: "block",
-                fontWeight: "bold",
-                color: "#666",
-                mb: 1,
-                fontSize: "0.75rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-              }}
-            >
-              Previous Weeks
-            </Typography>
-            <PreviousWeeksTable scores={userScores} />
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Tabs
+                value={tabValue}
+                onChange={handleTabChange}
+                sx={{
+                  "& .MuiTab-root": {
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    minHeight: "36px",
+                    py: 0,
+                  },
+                }}
+              >
+                <Tab label="Previous Weeks" />
+                <Tab label="Everyone's Scores" />
+              </Tabs>
+            </Box>
+
+            {tabValue === 0 && <PreviousWeeksTable scores={userScores} />}
+            {tabValue === 1 && (
+              <EveryonesScoresTable scores={previousScores} users={users} />
+            )}
           </>
         )}
       </CardContent>
