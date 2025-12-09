@@ -33,12 +33,18 @@ export const onRequest = async (
   let user = userResults.results.find((user: User) => user.email === userEmail);
 
   if (!user) {
-    user = await context.env.pickleball_score_tracker_database
+    const userId = crypto.randomUUID();
+    await context.env.pickleball_score_tracker_database
       .prepare(
         "INSERT INTO Users (userId, email, facilitator) VALUES (?, ?, ?)"
       )
-      .bind(crypto.randomUUID(), userEmail, false)
+      .bind(userId, userEmail, false)
       .run();
+
+    user = await context.env.pickleball_score_tracker_database
+      .prepare("SELECT * FROM Users WHERE email = ?")
+      .bind(userEmail)
+      .first();
   }
 
   return new Response(
@@ -49,7 +55,7 @@ export const onRequest = async (
       ),
       scores: scoresResults.results,
       users: userResults.results,
-      activeWeekNumber: activeWeek.weekNumber,
+      activeWeekNumber: activeWeek?.weekNumber || 1,
     }),
     {
       headers: { "Content-Type": "application/json" },

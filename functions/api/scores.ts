@@ -44,10 +44,10 @@ export const onRequestPost = async (
     }
 
     // Check if score already exists for this user and week
-    const [score] = await context.env.pickleball_score_tracker_database
+    const score = await context.env.pickleball_score_tracker_database
       .prepare("SELECT * FROM Scores WHERE userId = ? AND weekNumber = ?")
       .bind(userId, activeWeekNumber)
-      .run();
+      .first();
 
     if (score) {
       // Update existing score
@@ -72,9 +72,9 @@ export const onRequestPost = async (
 
       await context.env.pickleball_score_tracker_database
         .prepare(
-          "INSERT INTO Scores (scoreId, userId, weekNumber, amount) VALUES (?, ?, ?, ?)"
+          "INSERT INTO Scores (scoreId, userId, weekNumber, amount, active) VALUES (?, ?, ?, ?, ?)"
         )
-        .bind(scoreId, userId, activeWeekNumber, amount)
+        .bind(scoreId, userId, activeWeekNumber, amount, true)
         .run();
 
       return new Response(
