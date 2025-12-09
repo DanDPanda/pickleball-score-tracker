@@ -2,7 +2,7 @@ import type { EventContext } from "@cloudflare/workers-types";
 
 interface ScoreBody {
   userId: string;
-  weekNumber: number;
+  activeWeekNumber: number;
   amount: number;
 }
 
@@ -17,7 +17,7 @@ export const onRequestPost = async (
   try {
     const body: ScoreBody = await context.request.json();
 
-    const { userId, amount } = body;
+    const { userId, amount, activeWeekNumber } = body;
 
     // Validate required fields
     if (!userId || amount === undefined) {
@@ -45,10 +45,8 @@ export const onRequestPost = async (
 
     // Check if score already exists for this user and week
     const [score] = await context.env.pickleball_score_tracker_database
-      .prepare(
-        "SELECT * FROM Scores WHERE userId = ? AND weekNumber = (SELECT MAX(weekNumber) FROM Weeks)"
-      )
-      .bind(userId)
+      .prepare("SELECT * FROM Scores WHERE userId = ? AND weekNumber = ?")
+      .bind(userId, activeWeekNumber)
       .run();
 
     if (score) {
@@ -74,9 +72,9 @@ export const onRequestPost = async (
 
       await context.env.pickleball_score_tracker_database
         .prepare(
-          "INSERT INTO Scores (scoreId, userId, weekNumber, amount) VALUES (?, ?, (SELECT MAX(weekNumber) FROM Weeks), ?)"
+          "INSERT INTO Scores (scoreId, userId, weekNumber, amount) VALUES (?, ?, ?, ?)"
         )
-        .bind(scoreId, userId, amount)
+        .bind(scoreId, userId, activeWeekNumber, amount)
         .run();
 
       return new Response(

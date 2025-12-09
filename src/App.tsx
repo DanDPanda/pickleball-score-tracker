@@ -5,18 +5,12 @@ import { fetchData } from "./api/data";
 import { UserView } from "./components/UserView";
 import { FacilitatorView } from "./components/FacilitatorView";
 import "./App.css";
-import type { User } from "./types/user";
-import type { Score } from "./types/score";
+import type { Data } from "./types/data";
 
 const dataPromise = fetchData();
 
 function App() {
-  const { user, userScores, scores, users } = use<{
-    user: User;
-    userScores: Score[];
-    scores: Score[];
-    users: User[];
-  }>(dataPromise);
+  const { user, userScores, scores, users } = use<Data>(dataPromise);
 
   return (
     <ThemeProvider theme={theme}>

@@ -1,5 +1,6 @@
 import type { EventContext } from "@cloudflare/workers-types";
 import type { User } from "../../src/types/user";
+import type { Week } from "../../src/types/week";
 
 export const onRequest = async (
   context: EventContext<
@@ -13,11 +14,22 @@ export const onRequest = async (
     context.request.headers.get("Cf-Access-Authenticated-User-Email") ||
     "dan.v.dinh@gmail.com";
 
-  const userResults = await context.env.pickleball_score_tracker_database
-    .prepare("SELECT * FROM Users")
-    .bind()
-    .run();
+  const [userResults, scoresResults, weeksResults] = await Promise.all([
+    context.env.pickleball_score_tracker_database
+      .prepare("SELECT * FROM Users")
+      .bind()
+      .run(),
+    context.env.pickleball_score_tracker_database
+      .prepare("SELECT * FROM Scores")
+      .bind()
+      .run(),
+    context.env.pickleball_score_tracker_database
+      .prepare("SELECT * FROM Weeks")
+      .bind()
+      .run(),
+  ]);
 
+  const activeWeek = weeksResults.results.find((week: Week) => week.active);
   let user = userResults.results.find((user: User) => user.email === userEmail);
 
   if (!user) {
@@ -29,11 +41,6 @@ export const onRequest = async (
       .run();
   }
 
-  const scoresResults = await context.env.pickleball_score_tracker_database
-    .prepare("SELECT * FROM Scores")
-    .bind()
-    .run();
-
   return new Response(
     JSON.stringify({
       user,
@@ -42,6 +49,7 @@ export const onRequest = async (
       ),
       scores: scoresResults.results,
       users: userResults.results,
+      activeWeekNumber: activeWeek.weekNumber,
     }),
     {
       headers: { "Content-Type": "application/json" },
