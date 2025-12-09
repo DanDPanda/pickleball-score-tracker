@@ -13,16 +13,10 @@ export const onRequest = async (
     context.request.headers.get("Cf-Access-Authenticated-User-Email") ||
     "dan.v.dinh@gmail.com";
 
-  const [userResults, weeksResults] = await Promise.all([
-    context.env.pickleball_score_tracker_database
-      .prepare("SELECT * FROM Users")
-      .bind()
-      .run(),
-    context.env.pickleball_score_tracker_database
-      .prepare("SELECT * FROM Weeks")
-      .bind()
-      .run(),
-  ]);
+  const userResults = await context.env.pickleball_score_tracker_database
+    .prepare("SELECT * FROM Users")
+    .bind()
+    .run();
 
   let user = userResults.results.find((user: User) => user.email === userEmail);
 
@@ -43,7 +37,9 @@ export const onRequest = async (
   return new Response(
     JSON.stringify({
       user,
-      weeks: weeksResults.results,
+      userScores: scoresResults.results.filter(
+        (score: { userId: string }) => score.userId === user.userId
+      ),
       scores: scoresResults.results,
       users: userResults.results,
     }),

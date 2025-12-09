@@ -4,7 +4,7 @@
 export interface Score {
   scoreId: string;
   userId: string;
-  weekId: string;
+  weekNumber: number;
   amount: number;
   active: boolean;
 }

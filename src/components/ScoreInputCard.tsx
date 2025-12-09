@@ -4,10 +4,14 @@ import {
   CardContent,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
+import type { Score } from "../types/score";
 
-interface InputCardProps {
+interface ScoreInputCardProps {
+  userScores?: Score[];
   score: string;
+  lastScore: string;
   onScoreChange: (value: string) => void;
   onSubmitClick: () => void;
   onUpdateClick: () => void;
@@ -18,15 +22,17 @@ interface InputCardProps {
 
 const MAX_SCORE = 99;
 
-export const InputCard = ({
+export const ScoreInputCard = ({
+  userScores = [],
   score,
+  lastScore,
   onScoreChange,
   onSubmitClick,
   onUpdateClick,
   onRemoveClick,
   hasSubmitted,
   isScoreEmpty,
-}: InputCardProps) => {
+}: ScoreInputCardProps) => {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       if (hasSubmitted) {
@@ -51,12 +57,52 @@ export const InputCard = ({
       sx={{
         boxShadow: 3,
         borderRadius: 2,
-        backgroundColor: "#fafafa",
+        backgroundColor: "#fff",
         position: "relative",
         zIndex: 3,
       }}
     >
       <CardContent sx={{ p: 3 }}>
+        {/* Score Display Section */}
+        {lastScore && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 3,
+              pb: 2,
+              borderBottom: "2px solid #f0f0f0",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "0.7rem",
+                color: "#666",
+                mb: 1,
+                fontWeight: 500,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+              }}
+            >
+              Your Score for Week{" "}
+              {userScores.find((score) => score.active)?.weekNumber || ""}
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "3rem",
+                fontWeight: "bold",
+                color: "primary.main",
+                lineHeight: 1,
+              }}
+            >
+              {lastScore}
+            </Typography>
+          </Box>
+        )}
+
+        {/* Input Section */}
         <Typography
           variant="subtitle1"
           sx={{
@@ -64,9 +110,10 @@ export const InputCard = ({
             color: "#666",
             textAlign: "center",
             fontWeight: 500,
+            fontSize: "0.95rem",
           }}
         >
-          Submit your weekly game score
+          {hasSubmitted ? "Update your score" : "Submit your weekly game score"}
         </Typography>
 
         <TextField
@@ -80,7 +127,7 @@ export const InputCard = ({
           sx={{
             mb: 2,
             "& .MuiOutlinedInput-root": {
-              backgroundColor: "#fff",
+              backgroundColor: "#fafafa",
             },
           }}
           placeholder="0"

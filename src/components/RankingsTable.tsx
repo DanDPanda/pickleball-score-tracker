@@ -31,7 +31,6 @@ export const EveryonesScoresTable = ({
     );
   }
 
-  // Calculate total scores per user
   const userTotals = users.map((user) => ({
     user,
     totalScore: scores
@@ -39,7 +38,6 @@ export const EveryonesScoresTable = ({
       .reduce((sum, score) => sum + score.amount, 0),
   }));
 
-  // Sort by total score descending
   userTotals.sort((a, b) => b.totalScore - a.totalScore);
 
   return (

@@ -9,23 +9,26 @@ import {
   Tab,
 } from "@mui/material";
 import type { Score } from "../types/score";
-import { PreviousWeeksTable } from "./PreviousWeeksTable";
-import { EveryonesScoresTable } from "./EveryonesScoresTable";
+import { PreviousWeeksTable } from "./YourScoresTable";
+import { EveryonesScoresTable } from "./RankingsTable";
 import type { User } from "../types/user";
 
 interface HeaderProps {
   user: User | undefined;
+  userScores?: Score[];
   scores?: Score[];
   users?: User[];
 }
 
-export const Header = ({ user, scores = [], users = [] }: HeaderProps) => {
+export const Header = ({
+  user,
+  userScores = [],
+  scores = [],
+  users = [],
+}: HeaderProps) => {
   const [tabValue, setTabValue] = useState(0);
 
   const previousScores = scores.filter((score) => !score.active);
-  const userScores = previousScores.filter(
-    (score) => score.userId === user?.userId
-  );
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -82,11 +85,12 @@ export const Header = ({ user, scores = [], users = [] }: HeaderProps) => {
                     letterSpacing: "0.5px",
                     minHeight: "36px",
                     py: 0,
+                    flex: 1,
                   },
                 }}
               >
-                <Tab label="Previous Weeks" />
-                <Tab label="Everyone's Scores" />
+                <Tab label="Your Scores" />
+                <Tab label="Rankings" />
               </Tabs>
             </Box>
 

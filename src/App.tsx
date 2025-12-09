@@ -3,21 +3,19 @@ import { Container, Box, CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import { fetchContext } from "./api/context";
 import { Header } from "./components/Header";
-import { ScoreDisplay } from "./components/ScoreDisplay";
-import { InputCard } from "./components/InputCard";
+import { ScoreInputCard } from "./components/ScoreInputCard";
 import "./App.css";
 import type { User } from "./types/user";
 import type { Score } from "./types/score";
-import type { Week } from "./types/week";
 
 const contextPromise = fetchContext();
 
 function App() {
   // Fetch context on mount
-  const { user, scores, weeks, users } = use<{
+  const { user, userScores, scores, users } = use<{
     user: User;
+    userScores: Score[];
     scores: Score[];
-    weeks: Week[];
     users: User[];
   }>(contextPromise);
 
@@ -78,16 +76,17 @@ function App() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            gap: 1,
+            gap: 2,
             position: "relative",
             zIndex: 2,
             pointerEvents: "auto",
           }}
         >
-          <Header user={user} scores={scores} users={users} />
-          <ScoreDisplay score={lastScore} weeks={weeks} />
-          <InputCard
+          <Header user={user} userScores={userScores} scores={scores} users={users} />
+          <ScoreInputCard
+            userScores={userScores}
             score={score}
+            lastScore={lastScore}
             onScoreChange={(value) => {
               const numValue = parseInt(value);
               if (value === "" || (numValue <= 99 && numValue >= 0)) {
