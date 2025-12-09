@@ -1,10 +1,12 @@
 import { Card, CardContent, Typography } from "@mui/material";
+import type { Week } from "../types/week";
 
 interface ScoreDisplayProps {
   score: string;
+  weeks?: Week[];
 }
 
-export const ScoreDisplay = ({ score }: ScoreDisplayProps) => {
+export const ScoreDisplay = ({ score, weeks = [] }: ScoreDisplayProps) => {
   if (!score) return null;
 
   return (
@@ -36,7 +38,8 @@ export const ScoreDisplay = ({ score }: ScoreDisplayProps) => {
             letterSpacing: "0.5px",
           }}
         >
-          YOUR SCORE TO BE SUBMITTED THIS WEEK
+          YOUR SCORE TO BE SUBMITTED FOR WEEK{" "}
+          {weeks.find((week) => week.active)?.weekNumber}
         </Typography>
         <Typography
           sx={{

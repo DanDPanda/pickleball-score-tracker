@@ -7,5 +7,4 @@ export interface Week {
   endDate: string; // ISO 8601 format
   active: boolean;
   weekNumber: number;
-  seasonId: string;
 }

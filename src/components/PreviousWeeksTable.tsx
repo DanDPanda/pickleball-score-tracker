@@ -80,7 +80,7 @@ export const PreviousWeeksTable = ({ scores }: PreviousWeeksTableProps) => {
                   color: "#1976d2",
                 }}
               >
-                {score.score}
+                {score.amount}
               </TableCell>
             </TableRow>
           ))}

@@ -9,31 +9,24 @@ import "./App.css";
 import type { User } from "./types/user";
 import type { Score } from "./types/score";
 import type { Week } from "./types/week";
-import type { Season } from "./types/season";
 
 const contextPromise = fetchContext();
 
 function App() {
   // Fetch context on mount
-  const { user, scores, weeks, seasons } = use<{
+  const { user, scores, weeks } = use<{
     user: User;
     scores: Score[];
     weeks: Week[];
-    seasons: Season[];
   }>(contextPromise);
 
-  const activeWeek = weeks.find((week) => week.active);
-  const activeSeason = seasons.find((season) => season.active);
   const currentScore = scores.find(
-    (score) =>
-      score.weekId === activeWeek?.weekId &&
-      score.seasonId === activeSeason?.seasonId
+    (score) => score.userId === user.userId && score.active
   );
-
   const [score, setScore] = useState<string>("");
   const [hasSubmitted, setHasSubmitted] = useState(!!currentScore);
   const [lastScore, setLastScore] = useState<string>(
-    currentScore ? currentScore.score.toString() : ""
+    currentScore ? currentScore.amount.toString() : ""
   );
 
   const handleSubmit = () => {
@@ -90,13 +83,8 @@ function App() {
             pointerEvents: "auto",
           }}
         >
-          <Header
-            email={user?.email}
-            scores={scores.filter(
-              (score) => score.weekId !== activeWeek?.weekId
-            )}
-          />
-          <ScoreDisplay score={lastScore} />
+          <Header user={user} scores={scores} />
+          <ScoreDisplay score={lastScore} weeks={weeks} />
           <InputCard
             score={score}
             onScoreChange={(value) => {

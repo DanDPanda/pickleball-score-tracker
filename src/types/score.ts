@@ -5,6 +5,6 @@ export interface Score {
   scoreId: string;
   userId: string;
   weekId: string;
-  seasonId: string;
-  score: number;
+  amount: number;
+  active: boolean;
 }
