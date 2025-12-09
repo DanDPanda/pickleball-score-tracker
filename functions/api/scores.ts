@@ -17,13 +17,13 @@ export const onRequestPost = async (
   try {
     const body: ScoreBody = await context.request.json();
 
-    const { userId, weekNumber, amount } = body;
+    const { userId, amount } = body;
 
     // Validate required fields
-    if (!userId || weekNumber === undefined || amount === undefined) {
+    if (!userId || amount === undefined) {
       return new Response(
         JSON.stringify({
-          error: "Missing required fields: userId, weekNumber, amount",
+          error: "Missing required fields: userId, amount",
         }),
         {
           status: 400,
@@ -44,24 +44,24 @@ export const onRequestPost = async (
     }
 
     // Check if score already exists for this user and week
-    const existingScore = await context.env.pickleball_score_tracker_database
-      .prepare("SELECT * FROM Scores WHERE userId = ? AND weekNumber = ?")
-      .bind(userId, weekNumber)
-      .first();
+    const [score] = await context.env.pickleball_score_tracker_database
+      .prepare(
+        "SELECT * FROM Scores WHERE userId = ? AND weekNumber = (SELECT MAX(weekNumber) FROM Weeks)"
+      )
+      .bind(userId)
+      .run();
 
-    if (existingScore) {
+    if (score) {
       // Update existing score
       await context.env.pickleball_score_tracker_database
-        .prepare(
-          "UPDATE Scores SET amount = ?, active = ? WHERE scoreId = ?"
-        )
-        .bind(amount, true, existingScore.scoreId)
+        .prepare("UPDATE Scores SET amount = ?, active = ? WHERE scoreId = ?")
+        .bind(amount, true, score.scoreId)
         .run();
 
       return new Response(
         JSON.stringify({
           message: "Score updated successfully",
-          scoreId: existingScore.scoreId,
+          scoreId: score.scoreId,
         }),
         {
           status: 200,
@@ -74,9 +74,9 @@ export const onRequestPost = async (
 
       await context.env.pickleball_score_tracker_database
         .prepare(
-          "INSERT INTO Scores (scoreId, userId, weekNumber, amount, active) VALUES (?, ?, ?, ?, ?)"
+          "INSERT INTO Scores (scoreId, userId, weekNumber, amount) VALUES (?, ?, (SELECT MAX(weekNumber) FROM Weeks), ?)"
         )
-        .bind(scoreId, userId, weekNumber, amount, true)
+        .bind(scoreId, userId, amount)
         .run();
 
       return new Response(
@@ -94,88 +94,6 @@ export const onRequestPost = async (
     return new Response(
       JSON.stringify({
         error: "Failed to process score",
-        details: error instanceof Error ? error.message : "Unknown error",
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
-};
-
-export const onRequestDelete = async (
-  context: EventContext<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { pickleball_score_tracker_database: any },
-    "",
-    { message: string }
-  >
-) => {
-  try {
-    const url = new URL(context.request.url);
-    const scoreId = url.searchParams.get("scoreId");
-    const userId = url.searchParams.get("userId");
-    const weekNumber = url.searchParams.get("weekNumber");
-
-    // Allow deletion by scoreId OR by userId + weekNumber
-    if (!scoreId && (!userId || !weekNumber)) {
-      return new Response(
-        JSON.stringify({
-          error: "Must provide either scoreId OR both userId and weekNumber",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    if (scoreId) {
-      // Delete by scoreId
-      const result = await context.env.pickleball_score_tracker_database
-        .prepare("DELETE FROM Scores WHERE scoreId = ?")
-        .bind(scoreId)
-        .run();
-
-      if (result.meta.changes === 0) {
-        return new Response(
-          JSON.stringify({ error: "Score not found" }),
-          {
-            status: 404,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
-    } else {
-      // Delete by userId and weekNumber
-      const result = await context.env.pickleball_score_tracker_database
-        .prepare("DELETE FROM Scores WHERE userId = ? AND weekNumber = ?")
-        .bind(userId, parseInt(weekNumber!))
-        .run();
-
-      if (result.meta.changes === 0) {
-        return new Response(
-          JSON.stringify({ error: "Score not found" }),
-          {
-            status: 404,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
-    }
-
-    return new Response(
-      JSON.stringify({ message: "Score deleted successfully" }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } catch (error) {
-    return new Response(
-      JSON.stringify({
-        error: "Failed to delete score",
         details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
