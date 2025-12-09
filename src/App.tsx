@@ -14,17 +14,27 @@ import type { Season } from "./types/season";
 const contextPromise = fetchContext();
 
 function App() {
-  const [score, setScore] = useState<string>("");
-  const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [lastScore, setLastScore] = useState<string>("");
-
   // Fetch context on mount
-  const { user } = use<{
+  const { user, scores, weeks, seasons } = use<{
     user: User;
     scores: Score[];
     weeks: Week[];
     seasons: Season[];
   }>(contextPromise);
+
+  const activeWeek = weeks.find((week) => week.active);
+  const activeSeason = seasons.find((season) => season.active);
+  const currentScore = scores.find(
+    (score) =>
+      score.weekId === activeWeek?.weekId &&
+      score.seasonId === activeSeason?.seasonId
+  );
+
+  const [score, setScore] = useState<string>("");
+  const [hasSubmitted, setHasSubmitted] = useState(!!currentScore);
+  const [lastScore, setLastScore] = useState<string>(
+    currentScore ? currentScore.score.toString() : ""
+  );
 
   const handleSubmit = () => {
     if (score.trim() === "") {

@@ -1,5 +1,9 @@
 --npx wrangler d1 execute prod-d1-tutorial --local --file=./schema.sql
---DROP TABLE IF EXISTS Users;
+--insert into Users (userId, email, facilitator) values ("001", "dan.v.dinh@gmail.com", false);
+--insert into Seasons (seasonId, startDate, endDate, active, number) values ('001', '', '', true, 1);
+--insert into Weeks (weekId, startDate, endDate, active, number, seasonId) values ('001', '', '', false, 1, '001'), ('002', '', '', true, 2, '001');
+--insert into Scores (scoreId, userId, weekId, seasonId, score) values ('001', '001', '001', '001', 10), ('002', '001', '002', '001', 15);
+DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Weeks;
 DROP TABLE IF EXISTS Seasons;
 DROP TABLE IF EXISTS Scores;

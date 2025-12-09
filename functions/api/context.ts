@@ -8,9 +8,9 @@ export const onRequest = async (
     { message: string }
   >
 ) => {
-  const userEmail = context.request.headers.get(
-    "Cf-Access-Authenticated-User-Email"
-  );
+  const userEmail =
+    context.request.headers.get("Cf-Access-Authenticated-User-Email") ||
+    "dan.v.dinh@gmail.com";
 
   const [userResults, weeksResults, seasonsResults] = await Promise.all([
     context.env.pickleball_score_tracker_database
