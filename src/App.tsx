@@ -72,10 +72,9 @@ function App() {
       >
         <Box
           sx={{
-            flex: 1,
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "flex-start",
             gap: 2,
             position: "relative",
             zIndex: 2,
