@@ -28,7 +28,7 @@ export const ScoreDisplay = ({ score }: ScoreDisplayProps) => {
       >
         <Typography
           sx={{
-            fontSize: "0.875rem",
+            fontSize: "0.7rem",
             color: "#666",
             mb: 2,
             fontWeight: 500,
@@ -36,26 +36,17 @@ export const ScoreDisplay = ({ score }: ScoreDisplayProps) => {
             letterSpacing: "0.5px",
           }}
         >
-          YOUR SCORE FOR THE WEEK
+          YOUR SCORE TO BE SUBMITTED THIS WEEK
         </Typography>
         <Typography
           sx={{
-            fontSize: "6rem",
+            fontSize: "4rem",
             fontWeight: "bold",
             color: "primary.main",
             lineHeight: 1,
           }}
         >
           {score}
-        </Typography>
-        <Typography
-          sx={{
-            fontSize: "0.9rem",
-            color: "#999",
-            mt: 2,
-          }}
-        >
-          Will be submitted at the end of the week
         </Typography>
       </CardContent>
     </Card>

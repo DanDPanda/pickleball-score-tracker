@@ -84,13 +84,18 @@ function App() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            gap: 3,
+            gap: 1,
             position: "relative",
             zIndex: 2,
             pointerEvents: "auto",
           }}
         >
-          <Header email={user?.email} />
+          <Header
+            email={user?.email}
+            scores={scores.filter(
+              (score) => score.weekId !== activeWeek?.weekId
+            )}
+          />
           <ScoreDisplay score={lastScore} />
           <InputCard
             score={score}
