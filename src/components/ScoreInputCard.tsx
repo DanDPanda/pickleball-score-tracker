@@ -14,7 +14,7 @@ interface ScoreInputCardProps {
   lastScore: string;
   onScoreChange: (value: string) => void;
   onSubmitClick: () => void;
-  onUpdateClick: () => void;
+  onModifyClick: () => void;
   onRemoveClick: () => void;
   hasSubmitted: boolean;
   isScoreEmpty: boolean;
@@ -28,7 +28,7 @@ export const ScoreInputCard = ({
   lastScore,
   onScoreChange,
   onSubmitClick,
-  onUpdateClick,
+  onModifyClick,
   onRemoveClick,
   hasSubmitted,
   isScoreEmpty,
@@ -36,7 +36,7 @@ export const ScoreInputCard = ({
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       if (hasSubmitted) {
-        onUpdateClick();
+        onModifyClick();
       } else {
         onSubmitClick();
       }
@@ -51,6 +51,8 @@ export const ScoreInputCard = ({
       onScoreChange(value);
     }
   };
+
+  console.log("userScores :>> ", userScores);
 
   return (
     <Card
@@ -78,7 +80,7 @@ export const ScoreInputCard = ({
           >
             <Typography
               sx={{
-                fontSize: "0.7rem",
+                fontSize: "0.9rem",
                 color: "#666",
                 mb: 1,
                 fontWeight: 500,
@@ -113,7 +115,7 @@ export const ScoreInputCard = ({
             fontSize: "0.95rem",
           }}
         >
-          {hasSubmitted ? "Update your score" : "Submit your weekly game score"}
+          {hasSubmitted ? "Modify your score" : "Submit your weekly game score"}
         </Typography>
 
         <TextField
@@ -143,7 +145,7 @@ export const ScoreInputCard = ({
           variant="contained"
           color="primary"
           size="large"
-          onClick={hasSubmitted ? onUpdateClick : onSubmitClick}
+          onClick={hasSubmitted ? onModifyClick : onSubmitClick}
           disabled={isScoreEmpty}
           sx={{
             py: 1.5,
@@ -153,7 +155,7 @@ export const ScoreInputCard = ({
             mb: hasSubmitted ? 1.5 : 0,
           }}
         >
-          {hasSubmitted ? "Update Score" : "Submit Score"}
+          {hasSubmitted ? "Modify Score" : "Submit Score"}
         </Button>
 
         {hasSubmitted && (

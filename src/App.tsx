@@ -39,7 +39,7 @@ function App() {
     setScore("");
   };
 
-  const handleUpdate = () => {
+  const handleModify = () => {
     if (score.trim() === "") {
       alert("Please enter a valid score");
       return;
@@ -81,7 +81,12 @@ function App() {
             pointerEvents: "auto",
           }}
         >
-          <Header user={user} userScores={userScores} scores={scores} users={users} />
+          <Header
+            user={user}
+            userScores={userScores}
+            scores={scores}
+            users={users}
+          />
           <ScoreInputCard
             userScores={userScores}
             score={score}
@@ -93,7 +98,7 @@ function App() {
               }
             }}
             onSubmitClick={handleSubmit}
-            onUpdateClick={handleUpdate}
+            onModifyClick={handleModify}
             onRemoveClick={handleRemove}
             hasSubmitted={hasSubmitted}
             isScoreEmpty={isScoreEmpty}
