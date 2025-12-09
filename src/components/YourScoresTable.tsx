@@ -11,12 +11,13 @@ import {
 } from "@mui/material";
 import type { Score } from "../types/score";
 
-interface PreviousWeeksTableProps {
-  scores: Score[];
+interface YourScoresTableProps {
+  userScores: Score[];
 }
 
-export const PreviousWeeksTable = ({ scores }: PreviousWeeksTableProps) => {
-  if (scores.length === 0) {
+export const YourScoresTable = ({ userScores }: YourScoresTableProps) => {
+  const userPreviousScores = userScores.filter((score) => !score.active);
+  if (userPreviousScores.length === 0) {
     return (
       <Box sx={{ mt: 2, textAlign: "center" }}>
         <Typography variant="caption" sx={{ color: "#999" }}>
@@ -60,7 +61,7 @@ export const PreviousWeeksTable = ({ scores }: PreviousWeeksTableProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {scores.map((score, index) => (
+          {userPreviousScores.map((score) => (
             <TableRow key={score.scoreId}>
               <TableCell
                 sx={{
@@ -69,7 +70,7 @@ export const PreviousWeeksTable = ({ scores }: PreviousWeeksTableProps) => {
                   color: "#666",
                 }}
               >
-                Week {index + 1}
+                Week {score.weekNumber}
               </TableCell>
               <TableCell
                 align="right"

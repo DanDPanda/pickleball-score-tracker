@@ -12,15 +12,15 @@ import {
 import type { Score } from "../types/score";
 import type { User } from "../types/user";
 
-interface EveryonesScoresTableProps {
+interface RankingsTableProps {
   scores: Score[];
   users: User[];
 }
 
-export const EveryonesScoresTable = ({
+export const RankingsTable = ({
   scores,
   users,
-}: EveryonesScoresTableProps) => {
+}: RankingsTableProps) => {
   if (scores.length === 0) {
     return (
       <Box sx={{ mt: 2, textAlign: "center" }}>

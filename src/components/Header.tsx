@@ -9,8 +9,8 @@ import {
   Tab,
 } from "@mui/material";
 import type { Score } from "../types/score";
-import { PreviousWeeksTable } from "./YourScoresTable";
-import { EveryonesScoresTable } from "./RankingsTable";
+import { YourScoresTable } from "./YourScoresTable";
+import { RankingsTable } from "./RankingsTable";
 import type { User } from "../types/user";
 
 interface HeaderProps {
@@ -94,9 +94,9 @@ export const Header = ({
               </Tabs>
             </Box>
 
-            {tabValue === 0 && <PreviousWeeksTable scores={userScores} />}
+            {tabValue === 0 && <YourScoresTable userScores={userScores} />}
             {tabValue === 1 && (
-              <EveryonesScoresTable scores={previousScores} users={users} />
+              <RankingsTable scores={previousScores} users={users} />
             )}
           </>
         )}
