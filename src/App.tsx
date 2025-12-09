@@ -6,6 +6,10 @@ import { Header } from "./components/Header";
 import { ScoreDisplay } from "./components/ScoreDisplay";
 import { InputCard } from "./components/InputCard";
 import "./App.css";
+import type { User } from "./types/user";
+import type { Score } from "./types/score";
+import type { Week } from "./types/week";
+import type { Season } from "./types/season";
 
 const contextPromise = fetchContext();
 
@@ -15,7 +19,12 @@ function App() {
   const [lastScore, setLastScore] = useState<string>("");
 
   // Fetch context on mount
-  const context = use(contextPromise);
+  const { user } = use<{
+    user: User;
+    scores: Score[];
+    weeks: Week[];
+    seasons: Season[];
+  }>(contextPromise);
 
   const handleSubmit = () => {
     if (score.trim() === "") {
@@ -71,7 +80,7 @@ function App() {
             pointerEvents: "auto",
           }}
         >
-          <Header email={context?.email} />
+          <Header email={user?.email} />
           <ScoreDisplay score={lastScore} />
           <InputCard
             score={score}
