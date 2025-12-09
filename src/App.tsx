@@ -1,14 +1,14 @@
 import { use } from "react";
 import { Container, CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
-import { fetchContext } from "./api/context";
+import { fetchData } from "./api/data";
 import { UserView } from "./components/UserView";
 import { FacilitatorView } from "./components/FacilitatorView";
 import "./App.css";
 import type { User } from "./types/user";
 import type { Score } from "./types/score";
 
-const contextPromise = fetchContext();
+const dataPromise = fetchData();
 
 function App() {
   const { user, userScores, scores, users } = use<{
@@ -16,7 +16,7 @@ function App() {
     userScores: Score[];
     scores: Score[];
     users: User[];
-  }>(contextPromise);
+  }>(dataPromise);
 
   return (
     <ThemeProvider theme={theme}>
