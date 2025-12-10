@@ -1,10 +1,10 @@
 /**
  * Score type - represents a score submission
  */
-export interface Score {
-  scoreId: string;
+export interface WeeklyScore {
+  weeklyScoreId: string;
   userId: string;
+  weekId: string;
   weekNumber: number;
-  amount: number;
-  active: boolean;
+  points: number;
 }

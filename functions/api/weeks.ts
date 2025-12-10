@@ -1,5 +1,5 @@
-import { User } from "../../src/types/user";
-import { Score } from "./../../src/types/score";
+import { User } from "../../src/types/User";
+import { WeeklyScore } from "../../src/types/WeeklyScore";
 import type { EventContext } from "@cloudflare/workers-types";
 
 export const onRequestPost = async (
@@ -36,12 +36,12 @@ export const onRequestPost = async (
     // Find minimum score from active week
     const minScore =
       activeScores.length > 0
-        ? Math.min(...activeScores.map((score: Score) => score.amount))
+        ? Math.min(...activeScores.map((score: WeeklyScore) => score.points))
         : 0;
 
     // Find users who didn't submit scores
     const usersWithScores = new Set(
-      activeScores.map((score: Score) => score.userId)
+      activeScores.map((score: WeeklyScore) => score.userId)
     );
     const usersWithoutScores = allUsers.filter(
       (user: User) => !usersWithScores.has(user.userId)

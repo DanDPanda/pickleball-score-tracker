@@ -8,27 +8,26 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import type { Score } from "../types/score";
-import { YourScoresTable } from "./YourScoresTable";
-import { RankingsTable } from "./RankingsTable";
-import type { User } from "../types/user";
+import type { WeeklyScore } from "../types/WeeklyScore";
+import type { User } from "../types/User";
+import { WeeklyScoresTab } from "./WeeklyScoresTab";
+import { GameScoresTab } from "./GameScoresTab";
+import type { GameScore } from "../types/GameScore";
 
-interface UserHeaderProps {
+interface UnifiedHeaderProps {
   user: User | undefined;
-  userScores?: Score[];
-  scores?: Score[];
+  weeklyScores?: WeeklyScore[];
+  gameScores?: GameScore[];
   users?: User[];
 }
 
-export const UserHeader = ({
+export const UnifiedHeader = ({
   user,
-  userScores = [],
-  scores = [],
+  weeklyScores = [],
+  gameScores = [],
   users = [],
-}: UserHeaderProps) => {
+}: UnifiedHeaderProps) => {
   const [tabValue, setTabValue] = useState(0);
-
-  const previousScores = scores.filter((score) => !score.active);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -62,7 +61,7 @@ export const UserHeader = ({
             sx={{
               textAlign: "center",
               color: "#666",
-              mb: scores.length > 0 ? 2 : 0,
+              mb: weeklyScores.length > 0 ? 2 : 0,
               fontSize: "0.9rem",
             }}
           >
@@ -70,7 +69,7 @@ export const UserHeader = ({
           </Typography>
         </Box>
 
-        {scores.length > 0 && (
+        {weeklyScores.length > 0 && (
           <>
             <Divider sx={{ my: 2 }} />
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -89,14 +88,16 @@ export const UserHeader = ({
                   },
                 }}
               >
-                <Tab label="Your Scores" />
-                <Tab label="Rankings" />
+                <Tab label="Weekly Scores" />
+                <Tab label="Game Scores" />
               </Tabs>
             </Box>
 
-            {tabValue === 0 && <YourScoresTable userScores={userScores} />}
+            {tabValue === 0 && (
+              <WeeklyScoresTab weeklyScores={weeklyScores} users={users} />
+            )}
             {tabValue === 1 && (
-              <RankingsTable scores={previousScores} users={users} />
+              <GameScoresTab gameScores={gameScores} users={users} />
             )}
           </>
         )}

@@ -1,10 +1,11 @@
-import type { Score } from "./score";
-import type { User } from "./user";
+import type { WeeklyScore } from "./WeeklyScore";
+import type { User } from "./User";
+import type { GameScore } from "./GameScore";
 
 export type Data = {
   user: User;
   users: User[];
-  userScores: Score[];
-  scores: Score[];
+  weeklyScores: WeeklyScore[];
+  gameScores: GameScore[];
   activeWeekNumber: number;
 };

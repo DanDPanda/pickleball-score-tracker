@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Box, Button, Card, CardContent } from "@mui/material";
-import { FacilitatorHeader } from "./FacilitatorHeader";
-import type { User } from "../types/user";
-import type { Score } from "../types/score";
+import { UnifiedHeader } from "../../components/UnifiedHeader";
+import type { User } from "../../types/User";
+import type { WeeklyScore } from "../../types/WeeklyScore";
+import type { GameScore } from "../../types/GameScore";
 
 interface FacilitatorViewProps {
   user: User;
-  userScores: Score[];
-  scores: Score[];
+  weeklyScores: WeeklyScore[];
   users: User[];
+  gameScores: GameScore[];
 }
 
 async function startNewWeekAction() {
@@ -39,8 +40,9 @@ async function resetSeasonAction() {
 
 export const FacilitatorView = ({
   user,
-  scores,
+  weeklyScores,
   users,
+  gameScores,
 }: FacilitatorViewProps) => {
   const [isStartingWeek, setIsStartingWeek] = useState(false);
   const [isResettingSeason, setIsResettingSeason] = useState(false);
@@ -93,7 +95,12 @@ export const FacilitatorView = ({
         pointerEvents: "auto",
       }}
     >
-      <FacilitatorHeader user={user} scores={scores} users={users} />
+      <UnifiedHeader
+        user={user}
+        weeklyScores={weeklyScores}
+        users={users}
+        gameScores={gameScores}
+      />
 
       <Card
         sx={{

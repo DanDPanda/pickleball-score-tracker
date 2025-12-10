@@ -1,5 +1,5 @@
 import type { EventContext } from "@cloudflare/workers-types";
-import type { User } from "../../src/types/user";
+import type { User } from "../../src/types/User";
 
 export const onRequest = async (
   context: EventContext<
@@ -13,19 +13,28 @@ export const onRequest = async (
     context.request.headers.get("Cf-Access-Authenticated-User-Email") ||
     "dan.v.dinh@gmail.com";
 
-  const [usersResults, activeUsersResults, scoresResults] = await Promise.all([
+  const [
+    usersResults,
+    activeUsersResults,
+    weeklyScoresResults,
+    gameScoresResults,
+  ] = await Promise.all([
     context.env.pickleball_score_tracker_database
       .prepare("SELECT * FROM Users")
       .bind()
       .run(),
     context.env.pickleball_score_tracker_database
       .prepare(
-        "SELECT DISTINCT Users.* FROM Users INNER JOIN Scores ON Users.userId = Scores.userId"
+        "SELECT DISTINCT Users.* FROM Users INNER JOIN WeeklyScores ON Users.userId = WeeklyScores.userId"
       )
       .bind()
       .run(),
     context.env.pickleball_score_tracker_database
-      .prepare("SELECT * FROM Scores")
+      .prepare("SELECT * FROM WeeklyScores")
+      .bind()
+      .run(),
+    context.env.pickleball_score_tracker_database
+      .prepare("SELECT * FROM GameScores")
       .bind()
       .run(),
   ]);
@@ -52,10 +61,8 @@ export const onRequest = async (
   return new Response(
     JSON.stringify({
       user,
-      userScores: scoresResults.results.filter(
-        (score: { userId: string }) => score.userId === user.userId
-      ),
-      scores: scoresResults.results,
+      weeklyScores: weeklyScoresResults.results,
+      gameScores: gameScoresResults.results,
       users: activeUsersResults.results,
     }),
     {
