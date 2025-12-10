@@ -15,7 +15,7 @@ export const FacilitatorView = ({
   scores,
   users,
 }: FacilitatorViewProps) => {
-  const handleResetWeek = () => {
+  const handleStartNewWeek = () => {
     // Logic to be added later
   };
 
@@ -52,7 +52,7 @@ export const FacilitatorView = ({
             variant="contained"
             color="primary"
             size="large"
-            onClick={handleResetWeek}
+            onClick={handleStartNewWeek}
             sx={{
               py: 1.5,
               fontSize: "1rem",
@@ -60,7 +60,7 @@ export const FacilitatorView = ({
               textTransform: "capitalize",
             }}
           >
-            Reset Week
+            Start New Week
           </Button>
 
           <Button
