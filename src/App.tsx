@@ -1,17 +1,9 @@
-import { use } from "react";
 import { Container, CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
-import { fetchData } from "./api/data";
-import { PlayerView } from "./views/player/UserView";
-import { FacilitatorView } from "./views/facilitator/FacilitatorView";
 import "./App.css";
-import type { Data } from "./types/Data";
-
-const dataPromise = fetchData();
+import { ViewTemplate } from "./components/ViewTemplate";
 
 function App() {
-  const { user, weeklyScores, gameScores, users } = use<Data>(dataPromise);
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -25,21 +17,7 @@ function App() {
           position: "relative",
         }}
       >
-        {!user.facilitator ? (
-          <FacilitatorView
-            user={user}
-            weeklyScores={weeklyScores}
-            users={users}
-            gameScores={gameScores}
-          />
-        ) : (
-          <PlayerView
-            user={user}
-            weeklyScores={weeklyScores}
-            users={users}
-            gameScores={gameScores}
-          />
-        )}
+        <ViewTemplate />
       </Container>
     </ThemeProvider>
   );
