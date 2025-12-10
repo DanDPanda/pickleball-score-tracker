@@ -1,3 +1,5 @@
+import { User } from "../../src/types/user";
+import { Score } from "./../../src/types/score";
 import type { EventContext } from "@cloudflare/workers-types";
 
 export const onRequestPost = async (
@@ -13,6 +15,58 @@ export const onRequestPost = async (
       .prepare("SELECT * FROM Weeks WHERE active = true")
       .bind()
       .first();
+
+    // Get all users who have scores and scores from the active week
+    const [usersResults, activeScoresResults] = await Promise.all([
+      context.env.pickleball_score_tracker_database
+        .prepare(
+          "SELECT DISTINCT Users.* FROM Users INNER JOIN Scores ON Users.userId = Scores.userId"
+        )
+        .bind()
+        .run(),
+      context.env.pickleball_score_tracker_database
+        .prepare("SELECT * FROM Scores WHERE active = true")
+        .bind()
+        .run(),
+    ]);
+
+    const allUsers = usersResults.results;
+    const activeScores = activeScoresResults.results;
+
+    // Find minimum score from active week
+    const minScore =
+      activeScores.length > 0
+        ? Math.min(...activeScores.map((score: Score) => score.amount))
+        : 0;
+
+    // Find users who didn't submit scores
+    const usersWithScores = new Set(
+      activeScores.map((score: Score) => score.userId)
+    );
+    const usersWithoutScores = allUsers.filter(
+      (user: User) => !usersWithScores.has(user.userId)
+    );
+
+    // Add minimum score for users who didn't submit
+    if (usersWithoutScores.length > 0) {
+      const insertStatements = usersWithoutScores.map((user: User) =>
+        context.env.pickleball_score_tracker_database
+          .prepare(
+            "INSERT INTO Scores (scoreId, userId, weekNumber, amount, active) VALUES (?, ?, ?, ?, ?)"
+          )
+          .bind(
+            crypto.randomUUID(),
+            user.userId,
+            activeWeek.weekNumber,
+            minScore,
+            false
+          )
+      );
+
+      await context.env.pickleball_score_tracker_database.batch(
+        insertStatements
+      );
+    }
 
     // Update existing week
     await context.env.pickleball_score_tracker_database
