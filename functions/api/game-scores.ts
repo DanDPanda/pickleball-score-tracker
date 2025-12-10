@@ -50,12 +50,24 @@ export const onRequestPost = async (
     // Validate each game point
     for (const gamePoint of gamePoints) {
       if (
-        gamePoint.gameNumber === undefined ||
-        gamePoint.points === undefined
+        typeof gamePoint.gameNumber !== "number" ||
+        gamePoint.gameNumber == null
       ) {
         return new Response(
           JSON.stringify({
-            error: "Each game point must have gameNumber and points",
+            error: "Each game point must have a valid numeric gameNumber",
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      if (typeof gamePoint.points !== "number" || gamePoint.points == null) {
+        return new Response(
+          JSON.stringify({
+            error: "Each game point must have a valid numeric points value",
           }),
           {
             status: 400,
@@ -91,17 +103,27 @@ export const onRequestPost = async (
       );
     }
 
+    // Fetch all existing scores for this user and week in a single query
+    const existingScoresResult =
+      await context.env.pickleball_score_tracker_database
+        .prepare("SELECT * FROM GameScores WHERE userId = ? AND weekId = ?")
+        .bind(userId, activeWeek.weekId)
+        .all();
+
+    // Create a map for quick lookup
+    const existingScoresMap = new Map();
+    if (existingScoresResult.results) {
+      for (const score of existingScoresResult.results) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        existingScoresMap.set((score as any).gameNumber, score);
+      }
+    }
+
     // Prepare batch upsert statements
     const upsertStatements = [];
 
     for (const gamePoint of gamePoints) {
-      // Check if game score already exists
-      const existingScore = await context.env.pickleball_score_tracker_database
-        .prepare(
-          "SELECT * FROM GameScores WHERE userId = ? AND weekId = ? AND gameNumber = ?"
-        )
-        .bind(userId, activeWeek.weekId, gamePoint.gameNumber)
-        .first();
+      const existingScore = existingScoresMap.get(gamePoint.gameNumber);
 
       if (existingScore) {
         // Update existing score
@@ -114,7 +136,8 @@ export const onRequestPost = async (
               gamePoint.points,
               true,
               false,
-              existingScore.gameScoreId
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (existingScore as any).gameScoreId
             )
         );
       } else {
