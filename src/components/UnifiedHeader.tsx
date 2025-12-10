@@ -11,9 +11,10 @@ import {
 import { WeeklyScoresTab } from "./WeeklyScoresTab";
 import { GameScoresTab } from "./GameScoresTab";
 import { useData } from "../hooks/useData";
+import type { Data } from "../types/Data";
 
 export const UnifiedHeader = () => {
-  const { user, weeks, weeklyScores } = useData();
+  const { player, weeks, weeklyScores }: Data = useData();
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -52,7 +53,7 @@ export const UnifiedHeader = () => {
               fontSize: "0.9rem",
             }}
           >
-            Hello, {user?.email || "Player"}!
+            Hello, {player?.email || "Player"}!
           </Typography>
         </Box>
 

@@ -3,7 +3,7 @@
  */
 export interface WeeklyScore {
   weeklyScoreId: string;
-  userId: string;
+  playerId: string;
   weekId: string;
   weekNumber: number;
   points: number;

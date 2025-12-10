@@ -13,7 +13,7 @@ import { useData } from "../hooks/useData";
 import type { GameScore } from "../types/GameScore";
 
 export const GameScoresTab = () => {
-  const { gameScores, users } = useData();
+  const { gameScores, players } = useData();
 
   const previousGameScores = gameScores.filter(
     (gameScore) => gameScore.previous
@@ -31,11 +31,11 @@ export const GameScoresTab = () => {
 
   // Get unique game numbers from scores (assuming we track games within weeks)
   // For now, we'll display individual weekly scores as "games"
-  const gameData = users.reduce((accum, user) => {
-    accum[user.userId] = {
-      name: user.email.split("@")[0],
+  const gameData = players.reduce((accum, player) => {
+    accum[player.playerId] = {
+      name: player.email.split("@")[0],
       gameScores: previousGameScores
-        .filter((score) => score.userId === user.userId)
+        .filter((score) => score.playerId === player.playerId)
         .sort((a, b) => a.gameNumber - b.gameNumber),
     };
     return accum;

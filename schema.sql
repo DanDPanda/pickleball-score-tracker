@@ -2,9 +2,9 @@
 DROP TABLE IF EXISTS WeeklyScores;
 DROP TABLE IF EXISTS GameScores;
 DROP TABLE IF EXISTS Weeks;
-DROP TABLE IF EXISTS Users;
-CREATE TABLE IF NOT EXISTS Users (
-    userId TEXT PRIMARY KEY,
+DROP TABLE IF EXISTS Players;
+CREATE TABLE IF NOT EXISTS Players (
+    playerId TEXT PRIMARY KEY,
     email TEXT,
     facilitator BOOLEAN
 );
@@ -17,25 +17,25 @@ CREATE TABLE IF NOT EXISTS Weeks (
 );
 CREATE TABLE IF NOT EXISTS WeeklyScores (
     weeklyScoreId TEXT PRIMARY KEY,
-    userId TEXT,
+    playerId TEXT,
     weekId TEXT,
     weekNumber INTEGER,
     points INTEGER,
-    FOREIGN KEY(userId) REFERENCES Users(userId),
+    FOREIGN KEY(playerId) REFERENCES Players(playerId),
     FOREIGN KEY(weekId) REFERENCES Weeks(weekId)
 );
 CREATE TABLE IF NOT EXISTS GameScores (
     gameScoreId TEXT PRIMARY KEY,
-    userId TEXT,
+    playerId TEXT,
     weekId TEXT,
     gameNumber INTEGER,
     points INTEGER,
     active BOOLEAN,
     previous BOOLEAN,
-    FOREIGN KEY(userId) REFERENCES Users(userId),
+    FOREIGN KEY(playerId) REFERENCES Players(playerId),
     FOREIGN KEY(weekId) REFERENCES Weeks(weekId)
 );
-insert into Users (userId, email, facilitator) values
+insert into Players (playerId, email, facilitator) values
     ("0f605319-b206-41f2-9a5a-6c9fd2820387", "dan.v.dinh@gmail.com", false), 
     ("12231dbe-29d3-4295-821e-3b9186fdc136", "test@gmail.com", false),
     ("a3c45e67-89ab-4def-0123-456789abcdef", "player3@gmail.com", false),
@@ -44,14 +44,14 @@ insert into Weeks (weekId, weekNumber, startDate, active) values
     ('21972fac-1dcc-47c5-b137-a80b54855df4', 1, '2024-01-01', false), 
     ('f023f7a2-350f-4154-881a-4d4b3c720b59', 2, '2024-01-08', false),
     ('f023f7a2-350f-4154-881a-4d4b3c720b50', 3, '2024-01-15', true);
-insert into WeeklyScores (weeklyScoreId, userId, weekId, weekNumber, points) values 
+insert into WeeklyScores (weeklyScoreId, playerId, weekId, weekNumber, points) values 
     ('68d756f8-03ad-417a-9f34-5e6096bcaab0', '0f605319-b206-41f2-9a5a-6c9fd2820387', '21972fac-1dcc-47c5-b137-a80b54855df4', 1, 10), 
     ('b81cc8fc-3ab3-433e-a5c6-f9da61d70509', '0f605319-b206-41f2-9a5a-6c9fd2820387', 'f023f7a2-350f-4154-881a-4d4b3c720b59', 2, 15),
     ('01b26e4e-acda-4e5e-8615-eb768d50856b', '12231dbe-29d3-4295-821e-3b9186fdc136', '21972fac-1dcc-47c5-b137-a80b54855df4', 1, 20), 
     ('ffd0609f-21e3-4cf8-961c-e5c1058266c9', '12231dbe-29d3-4295-821e-3b9186fdc136', 'f023f7a2-350f-4154-881a-4d4b3c720b59', 2, 25),
     ('a1b2c3d4-e5f6-7890-abcd-ef0123456789', 'a3c45e67-89ab-4def-0123-456789abcdef', '21972fac-1dcc-47c5-b137-a80b54855df4', 1, 15),
     ('b2c3d4e5-f678-90ab-cdef-0123456789ab', 'a3c45e67-89ab-4def-0123-456789abcdef', 'f023f7a2-350f-4154-881a-4d4b3c720b59', 2, 18);
-insert into GameScores (gameScoreId, userId, weekId, gameNumber, points, active, previous) values
+insert into GameScores (gameScoreId, playerId, weekId, gameNumber, points, active, previous) values
     ('gs-w1-u1-g1', '0f605319-b206-41f2-9a5a-6c9fd2820387', '21972fac-1dcc-47c5-b137-a80b54855df4', 1, 2, false, false),
     ('gs-w1-u1-g2', '0f605319-b206-41f2-9a5a-6c9fd2820387', '21972fac-1dcc-47c5-b137-a80b54855df4', 2, 3, false, false),
     ('gs-w1-u1-g3', '0f605319-b206-41f2-9a5a-6c9fd2820387', '21972fac-1dcc-47c5-b137-a80b54855df4', 3, 5, false, false),

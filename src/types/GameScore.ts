@@ -1,6 +1,6 @@
 export interface GameScore {
   gameScoreId: string;
-  userId: string;
+  playerId: string;
   weekId: string;
   gameNumber: number;
   points: number;

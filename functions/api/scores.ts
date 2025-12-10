@@ -1,7 +1,7 @@
 import type { EventContext } from "@cloudflare/workers-types";
 
 interface ScoreBody {
-  userId: string;
+  playerId: string;
   amount: number;
 }
 
@@ -16,13 +16,13 @@ export const onRequestPost = async (
   try {
     const body: ScoreBody = await context.request.json();
 
-    const { userId, amount } = body;
+    const { playerId, amount } = body;
 
     // Validate required fields
-    if (!userId || amount === undefined) {
+    if (!playerId || amount === undefined) {
       return new Response(
         JSON.stringify({
-          error: "Missing required fields: userId, amount",
+          error: "Missing required fields: playerId, amount",
         }),
         {
           status: 400,
@@ -47,10 +47,10 @@ export const onRequestPost = async (
       .bind()
       .first();
 
-    // Check if score already exists for this user and week
+    // Check if score already exists for this player and week
     const score = await context.env.pickleball_score_tracker_database
-      .prepare("SELECT * FROM Scores WHERE userId = ? AND weekNumber = ?")
-      .bind(userId, activeWeek.weekNumber)
+      .prepare("SELECT * FROM Scores WHERE playerId = ? AND weekNumber = ?")
+      .bind(playerId, activeWeek.weekNumber)
       .first();
 
     if (score) {
@@ -76,9 +76,9 @@ export const onRequestPost = async (
 
       await context.env.pickleball_score_tracker_database
         .prepare(
-          "INSERT INTO Scores (scoreId, userId, weekNumber, amount, active) VALUES (?, ?, ?, ?, ?)"
+          "INSERT INTO Scores (scoreId, playerId, weekNumber, amount, active) VALUES (?, ?, ?, ?, ?)"
         )
-        .bind(scoreId, userId, activeWeek.weekNumber, amount, true)
+        .bind(scoreId, playerId, activeWeek.weekNumber, amount, true)
         .run();
 
       return new Response(

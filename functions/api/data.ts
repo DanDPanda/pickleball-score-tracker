@@ -1,5 +1,5 @@
 import type { EventContext } from "@cloudflare/workers-types";
-import type { User } from "../../src/types/User";
+import type { Player } from "../../src/types/Player";
 
 export const onRequest = async (
   context: EventContext<
@@ -10,24 +10,24 @@ export const onRequest = async (
   >
 ) => {
   try {
-    const userEmail =
-      context.request.headers.get("Cf-Access-Authenticated-User-Email") ||
+    const playerEmail =
+      context.request.headers.get("Cf-Access-Authenticated-Player-Email") ||
       "dan.v.dinh@gmail.com";
 
     const [
-      usersResults,
-      activeUsersResults,
+      playersResults,
+      activePlayersResults,
       weeklyScoresResults,
       gameScoresResults,
       weeksResults,
     ] = await Promise.all([
       context.env.pickleball_score_tracker_database
-        .prepare("SELECT * FROM Users")
+        .prepare("SELECT * FROM Players")
         .bind()
         .run(),
       context.env.pickleball_score_tracker_database
         .prepare(
-          "SELECT DISTINCT Users.* FROM Users INNER JOIN WeeklyScores ON Users.userId = WeeklyScores.userId"
+          "SELECT DISTINCT Players.* FROM Players INNER JOIN WeeklyScores ON Players.playerId = WeeklyScores.playerId"
         )
         .bind()
         .run(),
@@ -47,31 +47,31 @@ export const onRequest = async (
         .run(),
     ]);
 
-    let user = usersResults.results.find(
-      (user: User) => user.email === userEmail
+    let player = playersResults.results.find(
+      (player: Player) => player.email === playerEmail
     );
 
-    if (!user) {
-      const userId = crypto.randomUUID();
+    if (!player) {
+      const playerId = crypto.randomUUID();
       await context.env.pickleball_score_tracker_database
         .prepare(
-          "INSERT INTO Users (userId, email, facilitator) VALUES (?, ?, ?)"
+          "INSERT INTO Players (playerId, email, facilitator) VALUES (?, ?, ?)"
         )
-        .bind(userId, userEmail, false)
+        .bind(playerId, playerEmail, false)
         .run();
 
-      user = await context.env.pickleball_score_tracker_database
-        .prepare("SELECT * FROM Users WHERE email = ?")
-        .bind(userEmail)
+      player = await context.env.pickleball_score_tracker_database
+        .prepare("SELECT * FROM Players WHERE email = ?")
+        .bind(playerEmail)
         .first();
     }
 
     return new Response(
       JSON.stringify({
-        user,
+        player,
         weeklyScores: weeklyScoresResults.results,
         gameScores: gameScoresResults.results,
-        users: activeUsersResults.results,
+        players: activePlayersResults.results,
         weeks: weeksResults.results,
       }),
       {

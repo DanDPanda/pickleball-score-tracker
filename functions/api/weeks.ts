@@ -15,11 +15,11 @@ export const onRequestPost = async (
       .bind()
       .first();
 
-    // Get all users who have scores and scores from the active week
-    const [usersResults, activeGameScoreResults] = await Promise.all([
+    // Get all players who have scores and scores from the active week
+    const [playersResults, activeGameScoreResults] = await Promise.all([
       context.env.pickleball_score_tracker_database
         .prepare(
-          "SELECT DISTINCT Users.* FROM Users INNER JOIN GameScores ON Users.userId = GameScores.userId"
+          "SELECT DISTINCT Players.* FROM Players INNER JOIN GameScores ON Players.playerId = GameScores.playerId"
         )
         .bind()
         .run(),
@@ -29,15 +29,15 @@ export const onRequestPost = async (
         .run(),
     ]);
 
-    const users = usersResults.results;
+    const players = playersResults.results;
     const activeGameScores = activeGameScoreResults.results;
 
-    const weeklyScores: Record<string, number> = users.reduce(
+    const weeklyScores: Record<string, number> = players.reduce(
       (accum: Record<string, number>, gameScore: GameScore) => ({
         ...accum,
-        [gameScore.userId]: activeGameScores.reduce(
+        [gameScore.playerId]: activeGameScores.reduce(
           (accum: number, score: GameScore) =>
-            accum + (score.userId === gameScore.userId ? score.points : 0),
+            accum + (score.playerId === gameScore.playerId ? score.points : 0),
           0
         ),
       }),
@@ -50,20 +50,21 @@ export const onRequestPost = async (
         ? Math.min(...Object.values(weeklyScores))
         : 0;
 
-    // Add minimum score for users who didn't submit
+    // Add minimum score for players who didn't submit
     if (Object.keys(weeklyScores).length > 0) {
-      const insertStatements = Object.keys(weeklyScores).map((userId: string) =>
-        context.env.pickleball_score_tracker_database
-          .prepare(
-            "INSERT INTO WeeklyScores (weeklyScoreId, userId, weekId, weekNumber, points) VALUES (?, ?, ?, ?, ?)"
-          )
-          .bind(
-            crypto.randomUUID(),
-            userId,
-            activeWeek.weekId,
-            activeWeek.weekNumber,
-            weeklyScores[userId] || minScore
-          )
+      const insertStatements = Object.keys(weeklyScores).map(
+        (playerId: string) =>
+          context.env.pickleball_score_tracker_database
+            .prepare(
+              "INSERT INTO WeeklyScores (weeklyScoreId, playerId, weekId, weekNumber, points) VALUES (?, ?, ?, ?, ?)"
+            )
+            .bind(
+              crypto.randomUUID(),
+              playerId,
+              activeWeek.weekId,
+              activeWeek.weekNumber,
+              weeklyScores[playerId] || minScore
+            )
       );
 
       await context.env.pickleball_score_tracker_database.batch(

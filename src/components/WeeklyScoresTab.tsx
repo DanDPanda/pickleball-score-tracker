@@ -10,21 +10,21 @@ import {
 import { useData } from "../hooks/useData";
 
 export const WeeklyScoresTab = () => {
-  const { weeklyScores, users } = useData();
+  const { weeklyScores, players } = useData();
 
   // Get unique week numbers from scores
   const weeks = [
     ...new Set(weeklyScores.map((score) => score.weekNumber)),
   ].sort((a, b) => a - b);
 
-  // Build user scores data
-  const userScoresData = users.map((u) => {
-    const userScores = weeklyScores.filter((s) => s.userId === u.userId);
+  // Build player scores data
+  const playerScoresData = players.map((u) => {
+    const playerScores = weeklyScores.filter((s) => s.playerId === u.playerId);
     const weekScores: Record<number, number> = {};
     let total = 0;
 
     weeks.forEach((week) => {
-      const weekScore = userScores.find((s) => s.weekNumber === week);
+      const weekScore = playerScores.find((s) => s.weekNumber === week);
       if (weekScore) {
         weekScores[week] = weekScore.points;
         total += weekScore.points;
@@ -34,14 +34,14 @@ export const WeeklyScoresTab = () => {
     });
 
     return {
-      user: u,
+      player: u,
       weekScores,
       total,
     };
   });
 
   // Sort by total descending
-  userScoresData.sort((a, b) => b.total - a.total);
+  playerScoresData.sort((a, b) => b.total - a.total);
 
   return (
     <TableContainer
@@ -91,8 +91,8 @@ export const WeeklyScoresTab = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {userScoresData.map((item, index) => (
-            <TableRow key={item.user.userId}>
+          {playerScoresData.map((item, index) => (
+            <TableRow key={item.player.playerId}>
               <TableCell
                 sx={{
                   fontSize: "0.75rem",
@@ -106,11 +106,11 @@ export const WeeklyScoresTab = () => {
                 }}
               >
                 {index === 0 ? "🏆 " : ""}
-                {item.user.email.split("@")[0]}
+                {item.player.email.split("@")[0]}
               </TableCell>
               {weeks.map((week) => (
                 <TableCell
-                  key={`${item.user.userId}-week-${week}`}
+                  key={`${item.player.playerId}-week-${week}`}
                   align="center"
                   sx={{
                     fontSize: "0.75rem",

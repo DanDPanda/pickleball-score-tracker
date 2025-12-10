@@ -5,7 +5,7 @@ import { use } from "react";
 import { FacilitatorInput } from "../views/facilitator/FacilitatorInput";
 import { PlayerInput } from "../views/player/PlayerInput";
 import { fetchData } from "../api/data";
-import { DataProvider } from "./DataProvider";
+import { DataProvider } from "../providers/DataProvider";
 
 const dataPromise = fetchData();
 
@@ -26,7 +26,7 @@ export const ViewTemplate = () => {
         }}
       >
         <UnifiedHeader />
-        {!data.user.facilitator ? <FacilitatorInput /> : <PlayerInput />}
+        {!data.player.facilitator ? <FacilitatorInput /> : <PlayerInput />}
       </Box>
     </DataProvider>
   );
