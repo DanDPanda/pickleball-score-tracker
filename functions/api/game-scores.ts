@@ -49,10 +49,7 @@ export const onRequestPost = async (
 
     // Validate each game point
     for (const gamePoint of gamePoints) {
-      if (
-        typeof gamePoint.gameNumber !== "number" ||
-        gamePoint.gameNumber == null
-      ) {
+      if (typeof gamePoint.gameNumber !== "number") {
         return new Response(
           JSON.stringify({
             error: "Each game point must have a valid numeric gameNumber",
@@ -64,7 +61,7 @@ export const onRequestPost = async (
         );
       }
 
-      if (typeof gamePoint.points !== "number" || gamePoint.points == null) {
+      if (typeof gamePoint.points !== "number") {
         return new Response(
           JSON.stringify({
             error: "Each game point must have a valid numeric points value",
@@ -111,7 +108,8 @@ export const onRequestPost = async (
         .all();
 
     // Create a map for quick lookup
-    const existingScoresMap = new Map();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const existingScoresMap = new Map<number, any>();
     if (existingScoresResult.results) {
       for (const score of existingScoresResult.results) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
