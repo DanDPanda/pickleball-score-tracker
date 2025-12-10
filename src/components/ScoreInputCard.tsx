@@ -15,7 +15,6 @@ interface ScoreInputCardProps {
   onScoreChange: (value: string) => void;
   onSubmitClick: () => void;
   onModifyClick: () => void;
-  onRemoveClick: () => void;
   hasSubmitted: boolean;
   isScoreEmpty: boolean;
 }
@@ -29,7 +28,6 @@ export const ScoreInputCard = ({
   onScoreChange,
   onSubmitClick,
   onModifyClick,
-  onRemoveClick,
   hasSubmitted,
   isScoreEmpty,
 }: ScoreInputCardProps) => {
@@ -52,8 +50,6 @@ export const ScoreInputCard = ({
     }
   };
 
-  console.log("userScores :>> ", userScores);
-
   return (
     <Card
       sx={{
@@ -65,7 +61,6 @@ export const ScoreInputCard = ({
       }}
     >
       <CardContent sx={{ p: 3 }}>
-        {/* Score Display Section */}
         {lastScore && (
           <Box
             sx={{
@@ -73,9 +68,7 @@ export const ScoreInputCard = ({
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              mb: 3,
               pb: 2,
-              borderBottom: "2px solid #f0f0f0",
             }}
           >
             <Typography
@@ -105,18 +98,20 @@ export const ScoreInputCard = ({
         )}
 
         {/* Input Section */}
-        <Typography
-          variant="subtitle1"
-          sx={{
-            mb: 2,
-            color: "#666",
-            textAlign: "center",
-            fontWeight: 500,
-            fontSize: "0.95rem",
-          }}
-        >
-          {hasSubmitted ? "Modify your score" : "Submit your weekly game score"}
-        </Typography>
+        {!hasSubmitted && (
+          <Typography
+            variant="subtitle1"
+            sx={{
+              mb: 2,
+              color: "#666",
+              textAlign: "center",
+              fontWeight: 500,
+              fontSize: "0.95rem",
+            }}
+          >
+            Submit your weekly game score
+          </Typography>
+        )}
 
         <TextField
           fullWidth
@@ -157,25 +152,6 @@ export const ScoreInputCard = ({
         >
           {hasSubmitted ? "Modify Score" : "Submit Score"}
         </Button>
-
-        {hasSubmitted && (
-          <Button
-            fullWidth
-            variant="outlined"
-            color="error"
-            size="large"
-            onClick={onRemoveClick}
-            sx={{
-              py: 1.5,
-              fontSize: "1rem",
-              fontWeight: "bold",
-              textTransform: "capitalize",
-              mt: 1.5,
-            }}
-          >
-            Remove Score
-          </Button>
-        )}
       </CardContent>
     </Card>
   );

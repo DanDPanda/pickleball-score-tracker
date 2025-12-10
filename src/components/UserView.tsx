@@ -48,12 +48,6 @@ export const UserView = ({
     setScore("");
   };
 
-  const handleRemove = () => {
-    setLastScore("");
-    setHasSubmitted(false);
-    setScore("");
-  };
-
   const isScoreEmpty = score.trim() === "";
 
   return (
@@ -86,7 +80,6 @@ export const UserView = ({
         }}
         onSubmitClick={handleSubmit}
         onModifyClick={handleModify}
-        onRemoveClick={handleRemove}
         hasSubmitted={hasSubmitted}
         isScoreEmpty={isScoreEmpty}
       />
