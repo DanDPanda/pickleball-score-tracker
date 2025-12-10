@@ -5,4 +5,5 @@ export interface GameScore {
   gameNumber: number;
   points: number;
   active: boolean;
+  previous: boolean;
 }

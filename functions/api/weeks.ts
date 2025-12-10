@@ -1,5 +1,4 @@
-import { User } from "../../src/types/User";
-import { WeeklyScore } from "../../src/types/WeeklyScore";
+import { GameScore } from "./../../src/types/GameScore";
 import type { EventContext } from "@cloudflare/workers-types";
 
 export const onRequestPost = async (
@@ -17,49 +16,53 @@ export const onRequestPost = async (
       .first();
 
     // Get all users who have scores and scores from the active week
-    const [usersResults, activeScoresResults] = await Promise.all([
+    const [usersResults, activeGameScoreResults] = await Promise.all([
       context.env.pickleball_score_tracker_database
         .prepare(
-          "SELECT DISTINCT Users.* FROM Users INNER JOIN Scores ON Users.userId = Scores.userId"
+          "SELECT DISTINCT Users.* FROM Users INNER JOIN GameScores ON Users.userId = GameScores.userId"
         )
         .bind()
         .run(),
       context.env.pickleball_score_tracker_database
-        .prepare("SELECT * FROM Scores WHERE active = true")
+        .prepare("SELECT * FROM GameScores WHERE active = true")
         .bind()
         .run(),
     ]);
 
-    const allUsers = usersResults.results;
-    const activeScores = activeScoresResults.results;
+    const users = usersResults.results;
+    const activeGameScores = activeGameScoreResults.results;
+
+    const weeklyScores: Record<string, number> = users.reduce(
+      (accum: Record<string, number>, gameScore: GameScore) => ({
+        ...accum,
+        [gameScore.userId]: activeGameScores.reduce(
+          (accum: number, score: GameScore) =>
+            accum + (score.userId === gameScore.userId ? score.points : 0),
+          0
+        ),
+      }),
+      {}
+    );
 
     // Find minimum score from active week
     const minScore =
-      activeScores.length > 0
-        ? Math.min(...activeScores.map((score: WeeklyScore) => score.points))
+      Object.keys(weeklyScores).length > 0
+        ? Math.min(...Object.values(weeklyScores))
         : 0;
 
-    // Find users who didn't submit scores
-    const usersWithScores = new Set(
-      activeScores.map((score: WeeklyScore) => score.userId)
-    );
-    const usersWithoutScores = allUsers.filter(
-      (user: User) => !usersWithScores.has(user.userId)
-    );
-
     // Add minimum score for users who didn't submit
-    if (usersWithoutScores.length > 0) {
-      const insertStatements = usersWithoutScores.map((user: User) =>
+    if (Object.keys(weeklyScores).length > 0) {
+      const insertStatements = Object.keys(weeklyScores).map((userId: string) =>
         context.env.pickleball_score_tracker_database
           .prepare(
-            "INSERT INTO Scores (scoreId, userId, weekNumber, amount, active) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO WeeklyScores (weeklyScoreId, userId, weekId, weekNumber, points) VALUES (?, ?, ?, ?, ?)"
           )
           .bind(
             crypto.randomUUID(),
-            user.userId,
+            userId,
+            activeWeek.weekId,
             activeWeek.weekNumber,
-            minScore,
-            false
+            weeklyScores[userId] || minScore
           )
       );
 
@@ -68,16 +71,24 @@ export const onRequestPost = async (
       );
     }
 
-    // Update existing week
     await context.env.pickleball_score_tracker_database
-      .prepare("UPDATE Weeks SET active = false")
+      .prepare("UPDATE GameScores SET previous = false")
       .bind()
       .run();
 
-    await context.env.pickleball_score_tracker_database
-      .prepare("UPDATE Scores SET active = false")
-      .bind()
-      .run();
+    // Update existing week
+    await Promise.all([
+      await context.env.pickleball_score_tracker_database
+        .prepare(
+          "UPDATE GameScores SET active = false, previous = true WHERE active = true"
+        )
+        .bind()
+        .run(),
+      await context.env.pickleball_score_tracker_database
+        .prepare("UPDATE Weeks SET active = false")
+        .bind()
+        .run(),
+    ]);
 
     const uuid = crypto.randomUUID();
 
@@ -99,6 +110,7 @@ export const onRequestPost = async (
       }
     );
   } catch (error) {
+    console.log("error :>> ", error);
     return new Response(
       JSON.stringify({
         error: "Failed to process week",
@@ -122,12 +134,17 @@ export const onRequestDelete = async (
 ) => {
   try {
     await context.env.pickleball_score_tracker_database
-      .prepare("DELETE FROM Weeks")
+      .prepare("DELETE FROM GameScores")
       .bind()
       .run();
 
     await context.env.pickleball_score_tracker_database
-      .prepare("DELETE FROM Scores")
+      .prepare("DELETE FROM WeeklyScores")
+      .bind()
+      .run();
+
+    await context.env.pickleball_score_tracker_database
+      .prepare("DELETE FROM Weeks")
       .bind()
       .run();
 

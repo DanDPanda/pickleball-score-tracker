@@ -10,8 +10,7 @@ import type { Data } from "./types/Data";
 const dataPromise = fetchData();
 
 function App() {
-  const { user, weeklyScores, gameScores, users } =
-    use<Data>(dataPromise);
+  const { user, weeklyScores, gameScores, users } = use<Data>(dataPromise);
 
   return (
     <ThemeProvider theme={theme}>

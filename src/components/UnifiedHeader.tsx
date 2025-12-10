@@ -89,7 +89,9 @@ export const UnifiedHeader = ({
                 }}
               >
                 <Tab label="Weekly Scores" />
-                <Tab label="Game Scores" />
+                <Tab
+                  label={"Week " + weeklyScores[0]?.weekNumber + " Scores"}
+                />
               </Tabs>
             </Box>
 

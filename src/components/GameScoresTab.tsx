@@ -18,7 +18,9 @@ interface GameScoresTabProps {
 }
 
 export const GameScoresTab = ({ gameScores, users }: GameScoresTabProps) => {
-  const previousGameScores = gameScores.filter((score) => !score.active);
+  const previousGameScores = gameScores.filter(
+    (gameScore) => gameScore.previous
+  );
 
   if (previousGameScores.length === 0) {
     return (
