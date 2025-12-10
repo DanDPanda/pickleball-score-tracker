@@ -9,15 +9,12 @@ import {
   Typography,
   Box,
 } from "@mui/material";
+import { useData } from "../hooks/useData";
 import type { GameScore } from "../types/GameScore";
-import type { User } from "../types/User";
 
-interface GameScoresTabProps {
-  gameScores: GameScore[];
-  users: User[];
-}
+export const GameScoresTab = () => {
+  const { gameScores, users } = useData();
 
-export const GameScoresTab = ({ gameScores, users }: GameScoresTabProps) => {
   const previousGameScores = gameScores.filter(
     (gameScore) => gameScore.previous
   );

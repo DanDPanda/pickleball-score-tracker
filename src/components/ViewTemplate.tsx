@@ -5,31 +5,29 @@ import { use } from "react";
 import { FacilitatorInput } from "../views/facilitator/FacilitatorInput";
 import { PlayerInput } from "../views/player/PlayerInput";
 import { fetchData } from "../api/data";
+import { DataProvider } from "./DataProvider";
 
 const dataPromise = fetchData();
 
 export const ViewTemplate = () => {
-  const { user, weeklyScores, gameScores, users } = use<Data>(dataPromise);
+  const data = use<Data>(dataPromise);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        gap: 2,
-        position: "relative",
-        zIndex: 2,
-        pointerEvents: "auto",
-      }}
-    >
-      <UnifiedHeader
-        user={user}
-        weeklyScores={weeklyScores}
-        users={users}
-        gameScores={gameScores}
-      />
-      {!user.facilitator ? <FacilitatorInput /> : <PlayerInput />}
-    </Box>
+    <DataProvider value={data}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          gap: 2,
+          position: "relative",
+          zIndex: 2,
+          pointerEvents: "auto",
+        }}
+      >
+        <UnifiedHeader />
+        {!data.user.facilitator ? <FacilitatorInput /> : <PlayerInput />}
+      </Box>
+    </DataProvider>
   );
 };

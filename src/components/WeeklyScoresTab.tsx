@@ -7,15 +7,10 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import type { WeeklyScore } from "../types/WeeklyScore";
-import type { User } from "../types/User";
+import { useData } from "../hooks/useData";
 
-interface WeeklyScoresTabProps {
-  weeklyScores: WeeklyScore[];
-  users: User[];
-}
-
-export const WeeklyScoresTab = ({ weeklyScores, users }: WeeklyScoresTabProps) => {
+export const WeeklyScoresTab = () => {
+  const { weeklyScores, users } = useData();
 
   // Get unique week numbers from scores
   const weeks = [

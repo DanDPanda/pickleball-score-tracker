@@ -8,25 +8,12 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import type { WeeklyScore } from "../types/WeeklyScore";
-import type { User } from "../types/User";
 import { WeeklyScoresTab } from "./WeeklyScoresTab";
 import { GameScoresTab } from "./GameScoresTab";
-import type { GameScore } from "../types/GameScore";
+import { useData } from "../hooks/useData";
 
-interface UnifiedHeaderProps {
-  user: User | undefined;
-  weeklyScores?: WeeklyScore[];
-  gameScores?: GameScore[];
-  users?: User[];
-}
-
-export const UnifiedHeader = ({
-  user,
-  weeklyScores = [],
-  gameScores = [],
-  users = [],
-}: UnifiedHeaderProps) => {
+export const UnifiedHeader = () => {
+  const { user, weeks, weeklyScores } = useData();
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -89,18 +76,21 @@ export const UnifiedHeader = ({
                 }}
               >
                 <Tab label="Weekly Scores" />
-                <Tab
-                  label={"Week " + weeklyScores[0]?.weekNumber + " Scores"}
-                />
+                {weeklyScores.length > 1 && (
+                  <Tab
+                    label={
+                      "Week " +
+                      ((weeks.find((week) => week.active)?.weekNumber || 0) -
+                        1) +
+                      " Scores"
+                    }
+                  />
+                )}
               </Tabs>
             </Box>
 
-            {tabValue === 0 && (
-              <WeeklyScoresTab weeklyScores={weeklyScores} users={users} />
-            )}
-            {tabValue === 1 && (
-              <GameScoresTab gameScores={gameScores} users={users} />
-            )}
+            {tabValue === 0 && <WeeklyScoresTab />}
+            {tabValue === 1 && <GameScoresTab />}
           </>
         )}
       </CardContent>
