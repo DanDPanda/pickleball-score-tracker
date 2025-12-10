@@ -13,19 +13,19 @@ import { YourScoresTable } from "./YourScoresTable";
 import { RankingsTable } from "./RankingsTable";
 import type { User } from "../types/user";
 
-interface HeaderProps {
+interface UserHeaderProps {
   user: User | undefined;
   userScores?: Score[];
   scores?: Score[];
   users?: User[];
 }
 
-export const Header = ({
+export const UserHeader = ({
   user,
   userScores = [],
   scores = [],
   users = [],
-}: HeaderProps) => {
+}: UserHeaderProps) => {
   const [tabValue, setTabValue] = useState(0);
 
   const previousScores = scores.filter((score) => !score.active);

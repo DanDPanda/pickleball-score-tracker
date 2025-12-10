@@ -25,7 +25,7 @@ function App() {
           position: "relative",
         }}
       >
-        {user.facilitator ? (
+        {!user.facilitator ? (
           <FacilitatorView
             user={user}
             userScores={userScores}

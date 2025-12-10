@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box } from "@mui/material";
-import { Header } from "./Header";
+import { UserHeader } from "./UserHeader";
 import { ScoreInputCard } from "./ScoreInputCard";
 import type { User } from "../types/user";
 import type { Score } from "../types/score";
@@ -62,7 +62,7 @@ export const UserView = ({
         pointerEvents: "auto",
       }}
     >
-      <Header
+      <UserHeader
         user={user}
         userScores={userScores}
         scores={scores}
