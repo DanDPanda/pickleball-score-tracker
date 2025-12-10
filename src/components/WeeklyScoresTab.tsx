@@ -8,9 +8,10 @@ import {
   Paper,
 } from "@mui/material";
 import { useData } from "../hooks/useData";
+import type { Data } from "../types/Data";
 
 export const WeeklyScoresTab = () => {
-  const { weeklyScores, players } = useData();
+  const { weeklyScores, players }: Data = useData();
 
   // Get unique week numbers from scores
   const weeks = [
