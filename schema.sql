@@ -4,16 +4,16 @@ DROP TABLE IF EXISTS Weeks;
 DROP TABLE IF EXISTS Users;
 CREATE TABLE IF NOT EXISTS Users (userId TEXT PRIMARY KEY, email TEXT, facilitator BOOLEAN);
 CREATE TABLE IF NOT EXISTS Scores (scoreId TEXT PRIMARY KEY, userId TEXT, weekNumber INTEGER, amount INTEGER, active BOOLEAN, FOREIGN KEY(userId) REFERENCES Users(userId));
-CREATE TABLE IF NOT EXISTS Weeks (weekId TEXT PRIMARY KEY, weekNumber INTEGER, startDate TEXT);
+CREATE TABLE IF NOT EXISTS Weeks (weekId TEXT PRIMARY KEY, weekNumber INTEGER, startDate TEXT, active BOOLEAN);
 insert into Users (userId, email, facilitator) values
 ("0f605319-b206-41f2-9a5a-6c9fd2820387", "dan.v.dinh@gmail.com", false), 
 ("12231dbe-29d3-4295-821e-3b9186fdc136", "test@gmail.com", false),
 ("a3c45e67-89ab-4def-0123-456789abcdef", "player3@gmail.com", false);
-insert into Weeks (weekId, weekNumber, startDate) values 
-('21972fac-1dcc-47c5-b137-a80b54855df4', 1, '2024-01-01'), 
-('f023f7a2-350f-4154-881a-4d4b3c720b59', 2, '2024-01-08'),
-('d8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a', 3, '2024-01-15'),
-('9f8e7d6c-5b4a-3210-fedc-ba9876543210', 4, '2024-01-22');
+insert into Weeks (weekId, weekNumber, startDate, active) values 
+('21972fac-1dcc-47c5-b137-a80b54855df4', 1, '2024-01-01', false), 
+('f023f7a2-350f-4154-881a-4d4b3c720b59', 2, '2024-01-08', false),
+('d8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a', 3, '2024-01-15', false),
+('9f8e7d6c-5b4a-3210-fedc-ba9876543210', 4, '2024-01-22', true);
 insert into Scores (scoreId, userId, weekNumber, amount, active) values 
 ('68d756f8-03ad-417a-9f34-5e6096bcaab0', '0f605319-b206-41f2-9a5a-6c9fd2820387', 1, 10, false), 
 ('b81cc8fc-3ab3-433e-a5c6-f9da61d70509', '0f605319-b206-41f2-9a5a-6c9fd2820387', 2, 15, false),

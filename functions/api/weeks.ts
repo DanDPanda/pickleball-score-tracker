@@ -1,9 +1,5 @@
 import type { EventContext } from "@cloudflare/workers-types";
 
-interface WeekBody {
-  activeWeekNumber: number;
-}
-
 export const onRequestPost = async (
   context: EventContext<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,13 +8,20 @@ export const onRequestPost = async (
     { message: string }
   >
 ) => {
-  const body: WeekBody = await context.request.json();
-
-  const { activeWeekNumber } = body;
   try {
+    const activeWeek = await context.env.pickleball_score_tracker_database
+      .prepare("SELECT * FROM Weeks WHERE active = true")
+      .bind()
+      .first();
+
     // Update existing week
     await context.env.pickleball_score_tracker_database
       .prepare("UPDATE Weeks SET active = false")
+      .bind()
+      .run();
+
+    await context.env.pickleball_score_tracker_database
+      .prepare("UPDATE Scores SET active = false")
       .bind()
       .run();
 
@@ -28,7 +31,7 @@ export const onRequestPost = async (
       .prepare(
         "INSERT INTO Weeks (weekId, weekNumber, startDate, active) VALUES (?, ?, ?, true)"
       )
-      .bind(uuid, activeWeekNumber + 1, new Date().toISOString())
+      .bind(uuid, activeWeek.weekNumber + 1, new Date().toISOString())
       .run();
 
     return new Response(

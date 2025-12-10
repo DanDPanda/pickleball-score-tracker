@@ -6,5 +6,4 @@ export type Data = {
   users: User[];
   userScores: Score[];
   scores: Score[];
-  activeWeekNumber: number;
 };
