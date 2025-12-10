@@ -11,10 +11,9 @@ import {
 } from "@mui/material";
 import { useData } from "../hooks/useData";
 import type { GameScore } from "../types/GameScore";
-import type { Data } from "../types/Data";
 
 export const GameScoresTab = () => {
-  const { gameScores, players }: Data = useData();
+  const { gameScores, players } = useData();
 
   const previousGameScores = gameScores.filter(
     (gameScore) => gameScore.previous
