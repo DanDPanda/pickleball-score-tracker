@@ -13,9 +13,15 @@ export const onRequest = async (
     context.request.headers.get("Cf-Access-Authenticated-User-Email") ||
     "dan.v.dinh@gmail.com";
 
-  const [userResults, scoresResults] = await Promise.all([
+  const [usersResults, activeUsersResults, scoresResults] = await Promise.all([
     context.env.pickleball_score_tracker_database
       .prepare("SELECT * FROM Users")
+      .bind()
+      .run(),
+    context.env.pickleball_score_tracker_database
+      .prepare(
+        "SELECT DISTINCT Users.* FROM Users INNER JOIN Scores ON Users.userId = Scores.userId"
+      )
       .bind()
       .run(),
     context.env.pickleball_score_tracker_database
@@ -24,7 +30,9 @@ export const onRequest = async (
       .run(),
   ]);
 
-  let user = userResults.results.find((user: User) => user.email === userEmail);
+  let user = usersResults.results.find(
+    (user: User) => user.email === userEmail
+  );
 
   if (!user) {
     const userId = crypto.randomUUID();
@@ -48,7 +56,7 @@ export const onRequest = async (
         (score: { userId: string }) => score.userId === user.userId
       ),
       scores: scoresResults.results,
-      users: userResults.results,
+      users: activeUsersResults.results,
     }),
     {
       headers: { "Content-Type": "application/json" },

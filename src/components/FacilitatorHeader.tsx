@@ -206,9 +206,7 @@ export const FacilitatorHeader = ({
                                 item.weekScores[week] > 0 ? "bold" : "normal",
                             }}
                           >
-                            {item.weekScores[week] > 0
-                              ? item.weekScores[week]
-                              : "-"}
+                            {item.weekScores[week]}
                           </TableCell>
                         ))}
                         <TableCell
