@@ -16,29 +16,69 @@ export const PlayerInput = () => {
   const initializeGameScores = () => {
     if (!activeWeek) return [];
 
-    return Array.from({ length: activeWeek.games }, (_, index) => {
+    const obj: { [key: number]: { gameNumber: number; points: string } } = {};
+
+    for (let i = 0; i < activeWeek.games; i++) {
       const existingScore = gameScores.find(
         (score) =>
           score.playerId === player.playerId &&
           score.weekId === activeWeek.weekId &&
-          score.gameNumber === index + 1 &&
+          score.gameNumber === i + 1 &&
           score.active
       );
-      return existingScore?.points || 0;
-    });
+      obj[i + 1] = existingScore
+        ? {
+            gameNumber: existingScore.gameNumber,
+            points:
+              existingScore.points === 0 ? "" : existingScore.points.toString(),
+          }
+        : { gameNumber: i + 1, points: "" };
+    }
+
+    return obj;
   };
 
-  const [scores, setScores] = useState<number[]>(initializeGameScores());
+  const [scores, setScores] = useState(initializeGameScores());
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleScoreChange = (gameIndex: number, value: string) => {
-    const numValue = parseInt(value) || 0;
-    const newScores = [...scores];
-    newScores[gameIndex] = numValue;
+  const handleScoreChange = (gameNumber: number, value: string) => {
+    if (value && parseInt(value) > 99) return;
+
+    const newScores = { ...scores };
+    newScores[gameNumber] = {
+      gameNumber: gameNumber,
+      points: value,
+    };
     setScores(newScores);
   };
 
-  const handleSubmit = () => {
-    // TODO: Wire up submission logic
+  const handleSubmit = async () => {
+    if (!activeWeek || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/game-scores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          playerId: player.playerId,
+          gameScores: Object.values(scores).map((score) => ({
+            gameNumber: score.gameNumber,
+            points: score.points === "" ? 0 : parseInt(score.points),
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to submit scores");
+      }
+
+      window.location.reload();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Failed to submit scores");
+      setIsSubmitting(false);
+    }
   };
 
   if (!activeWeek) {
@@ -112,9 +152,8 @@ export const PlayerInput = () => {
               </Typography>
               <TextField
                 type="number"
-                value={scores[index]}
-                onChange={(e) => handleScoreChange(index, e.target.value)}
-                inputProps={{ min: 0 }}
+                value={scores[index + 1].points}
+                onChange={(e) => handleScoreChange(index + 1, e.target.value)}
                 size="small"
                 label="Points"
                 fullWidth
@@ -129,6 +168,7 @@ export const PlayerInput = () => {
         <Button
           variant="contained"
           onClick={handleSubmit}
+          disabled={isSubmitting}
           fullWidth
           sx={{
             mt: 1,
@@ -138,7 +178,7 @@ export const PlayerInput = () => {
             letterSpacing: "0.5px",
           }}
         >
-          Submit Scores
+          {isSubmitting ? "Submitting..." : "Submit Scores"}
         </Button>
       </CardContent>
     </Card>

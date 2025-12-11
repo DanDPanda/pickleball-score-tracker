@@ -3,7 +3,7 @@ import { GameScore } from "../../src/types/GameScore";
 
 interface ScoreBody {
   playerId: string;
-  gamesScores: GameScore[];
+  gameScores: GameScore[];
 }
 
 export const onRequestPost = async (
@@ -17,10 +17,10 @@ export const onRequestPost = async (
   try {
     const body: ScoreBody = await context.request.json();
 
-    const { playerId, gamesScores } = body;
+    const { playerId, gameScores } = body;
 
     // Validate required fields
-    if (!playerId || !gamesScores) {
+    if (!playerId || !gameScores) {
       return new Response(
         JSON.stringify({
           error: "Missing required fields: playerId, gameScores",
@@ -39,10 +39,17 @@ export const onRequestPost = async (
       .first();
 
     if (activeGameScores) {
-      const statements = gamesScores.map((gameScore) => {
+      const statements = gameScores.map((gameScore) => {
         return context.env.pickleball_score_tracker_database
-          .prepare("UPDATE GameScores SET gameNumber = ?, points = ?")
-          .bind(gameScore.gameNumber, gameScore.points);
+          .prepare(
+            "UPDATE GameScores SET gameNumber = ?, points = ? WHERE playerId = ? AND active = true AND gameNumber = ?"
+          )
+          .bind(
+            gameScore.gameNumber,
+            gameScore.points,
+            playerId,
+            gameScore.gameNumber
+          );
       });
 
       await context.env.pickleball_score_tracker_database.batch(statements);
@@ -50,7 +57,7 @@ export const onRequestPost = async (
       return new Response(
         JSON.stringify({
           message: "Scores updated successfully",
-          count: gamesScores.length,
+          count: gameScores.length,
         }),
         {
           status: 201,
@@ -59,7 +66,7 @@ export const onRequestPost = async (
       );
     } else {
       // Create new scores as batch
-      const statements = gamesScores.map((gameScore) => {
+      const statements = gameScores.map((gameScore) => {
         const scoreId = crypto.randomUUID();
         return context.env.pickleball_score_tracker_database
           .prepare(
@@ -79,7 +86,7 @@ export const onRequestPost = async (
       return new Response(
         JSON.stringify({
           message: "Scores created successfully",
-          count: gamesScores.length,
+          count: gameScores.length,
         }),
         {
           status: 201,
