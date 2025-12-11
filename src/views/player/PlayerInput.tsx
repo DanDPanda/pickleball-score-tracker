@@ -8,33 +8,22 @@ import {
   CardContent,
 } from "@mui/material";
 import { useData } from "../../hooks/useData";
-
 export const PlayerInput = () => {
   const { weeks, gameScores, player } = useData();
   const activeWeek = weeks.find((week) => week.active);
 
-  const initializeGameScores = () => {
-    if (!activeWeek) return [];
-
-    return Array.from({ length: activeWeek.games }, (_, index) => {
-      const existingScore = gameScores.find(
-        (score) =>
-          score.playerId === player.playerId &&
-          score.weekId === activeWeek.weekId &&
-          score.gameNumber === index + 1 &&
-          score.active
-      );
-      return existingScore?.points || 0;
-    });
-  };
-
-  const [scores, setScores] = useState<number[]>(initializeGameScores());
-
+  const [scores, setScores] = useState<{[key: number]: number}>(gameScores.reduce((acc, gameScore) => 
+  ({
+    ...acc,
+    [gameScore.gameNumber]: gameScore.points,
+  }), {} as {[key: number]: number}));
   const handleScoreChange = (gameIndex: number, value: string) => {
-    const numValue = parseInt(value) || 0;
-    const newScores = [...scores];
-    newScores[gameIndex] = numValue;
-    setScores(newScores);
+    setScores(
+      {
+        ...scores,
+        [gameIndex]: parseInt(value) || 0,
+      }
+    )
   };
 
   const handleSubmit = () => {
