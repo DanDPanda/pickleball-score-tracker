@@ -26,7 +26,7 @@ export const ViewTemplate = () => {
         }}
       >
         <UnifiedHeader />
-        {data.player.facilitator ? <FacilitatorInput /> : <PlayerInput />}
+        {!data.player.facilitator ? <FacilitatorInput /> : <PlayerInput />}
       </Box>
     </DataProvider>
   );
