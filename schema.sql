@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS WeeklyScores;
 DROP TABLE IF EXISTS GameScores;
 DROP TABLE IF EXISTS Weeks;
 DROP TABLE IF EXISTS Players;
+DROP TABLE IF EXISTS Users;
 CREATE TABLE IF NOT EXISTS Players (
     playerId TEXT PRIMARY KEY,
     email TEXT,
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS GameScores (
 );
 insert into Players (playerId, email, facilitator) values
     ("0f605319-b206-41f2-9a5a-6c9fd2820387", "dan.v.dinh@gmail.com", false), 
+    ("0f605319-b206-41f2-9a5a-6c9fd2820388", "hnid.nad@gmail.com", true), 
     ("12231dbe-29d3-4295-821e-3b9186fdc136", "test@gmail.com", false),
     ("a3c45e67-89ab-4def-0123-456789abcdef", "player3@gmail.com", false),
     ("a3c45e67-89ab-4def-0123-456789abcdeg", "player4@gmail.com", false);

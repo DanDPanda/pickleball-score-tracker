@@ -167,6 +167,7 @@ export const onRequestDelete = async (
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.log("error :>> ", error);
     return new Response(
       JSON.stringify({
         error: "Failed to reset season",

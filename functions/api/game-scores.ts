@@ -67,13 +67,13 @@ export const onRequestPost = async (
     } else {
       // Create new scores as batch
       const statements = gameScores.map((gameScore) => {
-        const scoreId = crypto.randomUUID();
+        const gameScoreId = crypto.randomUUID();
         return context.env.pickleball_score_tracker_database
           .prepare(
-            "INSERT INTO GameScores (scoreId, playerId, gameNumber, points, active) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO GameScores (gameScoreId, playerId, gameNumber, points, active) VALUES (?, ?, ?, ?, ?)"
           )
           .bind(
-            scoreId,
+            gameScoreId,
             playerId,
             gameScore.gameNumber,
             gameScore.points,
@@ -95,6 +95,7 @@ export const onRequestPost = async (
       );
     }
   } catch (error) {
+    console.log("error :>> ", error);
     return new Response(
       JSON.stringify({
         error: "Failed to process score",
