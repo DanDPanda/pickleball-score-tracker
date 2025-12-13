@@ -77,6 +77,8 @@ export const onRequestPost = async (
       .bind()
       .run();
 
+    const uuid = crypto.randomUUID();
+
     // Update existing week
     await Promise.all([
       await context.env.pickleball_score_tracker_database
@@ -86,19 +88,22 @@ export const onRequestPost = async (
         .bind()
         .run(),
       await context.env.pickleball_score_tracker_database
-        .prepare("UPDATE Weeks SET active = false")
+        .prepare("UPDATE Weeks SET active = false WHERE weekId = ?")
+        .bind(activeWeek.weekId)
+        .run(),
+      await context.env.pickleball_score_tracker_database
+        .prepare(
+          "INSERT INTO Weeks (weekId, weekNumber, startDate, active) VALUES (?, ?, ?, true)"
+        )
+        .bind(uuid, activeWeek.weekNumber + 1, new Date().toISOString())
+        .run(),
+      await context.env.pickleball_score_tracker_database
+        .prepare(
+          "DELETE FROM GameScores WHERE active = false AND previous = false;"
+        )
         .bind()
         .run(),
     ]);
-
-    const uuid = crypto.randomUUID();
-
-    await context.env.pickleball_score_tracker_database
-      .prepare(
-        "INSERT INTO Weeks (weekId, weekNumber, startDate, active) VALUES (?, ?, ?, true)"
-      )
-      .bind(uuid, activeWeek.weekNumber + 1, new Date().toISOString())
-      .run();
 
     return new Response(
       JSON.stringify({

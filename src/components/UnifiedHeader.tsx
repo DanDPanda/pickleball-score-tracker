@@ -76,7 +76,7 @@ export const UnifiedHeader = () => {
                 }}
               >
                 <Tab label="Weekly Scores" />
-                {weeklyScores.length > 1 && (
+                {weeklyScores.length && (
                   <Tab
                     label={
                       "Week " +
