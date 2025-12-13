@@ -47,7 +47,7 @@ export const onRequestPost = async (
     // Find minimum score from active week
     const minScore =
       Object.keys(weeklyScores).length > 0
-        ? Math.min(...Object.values(weeklyScores))
+        ? Math.min(...Object.values(weeklyScores).filter((score) => score > 0))
         : 0;
 
     // Add minimum score for players who didn't submit

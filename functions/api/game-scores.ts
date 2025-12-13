@@ -33,10 +33,18 @@ export const onRequestPost = async (
     }
 
     // Check if score already exists for this player and week
-    const activeGameScores = await context.env.pickleball_score_tracker_database
-      .prepare("SELECT * FROM GameScores WHERE playerId = ? AND active = true")
-      .bind(playerId)
-      .first();
+    const [activeGameScores, activeWeek] = await Promise.all([
+      context.env.pickleball_score_tracker_database
+        .prepare(
+          "SELECT * FROM GameScores WHERE playerId = ? AND active = true"
+        )
+        .bind(playerId)
+        .first(),
+      context.env.pickleball_score_tracker_database
+        .prepare("SELECT * FROM weeks WHERE active = true")
+        .bind()
+        .first(),
+    ]);
 
     if (activeGameScores) {
       const statements = gameScores.map((gameScore) => {
@@ -70,14 +78,14 @@ export const onRequestPost = async (
         const gameScoreId = crypto.randomUUID();
         return context.env.pickleball_score_tracker_database
           .prepare(
-            "INSERT INTO GameScores (gameScoreId, playerId, gameNumber, points, active) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO GameScores (gameScoreId, playerId, gameNumber, points, weekId, active, previous) VALUES (?, ?, ?, ?, ?, true, false)"
           )
           .bind(
             gameScoreId,
             playerId,
             gameScore.gameNumber,
             gameScore.points,
-            true
+            activeWeek.weekId
           );
       });
 
