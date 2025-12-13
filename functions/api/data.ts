@@ -1,6 +1,5 @@
 import type { EventContext } from "@cloudflare/workers-types";
 import type { Player } from "../../src/types/Player";
-import { getIdentity } from "@cloudflare/pages-plugin-cloudflare-access/api";
 
 export const onRequest = async (
   context: EventContext<
@@ -11,10 +10,14 @@ export const onRequest = async (
   >
 ) => {
   try {
-    console.log("context :>> ", context);
-    const identity = await getIdentity(context);
-    console.log("context.request.headers :>> ", identity);
-    const playerEmail = identity?.email;
+    console.log("context.request.headers :>> ", context.request.headers);
+    console.log(
+      "context.request.headers :>> ",
+      context.request.headers.get("Cf-Access-Authenticated-Player-Email")
+    );
+    const playerEmail = context.request.headers.get(
+      "Cf-Access-Authenticated-Player-Email"
+    );
 
     const [
       playersResults,
