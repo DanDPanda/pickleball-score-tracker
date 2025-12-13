@@ -10,9 +10,9 @@ export const onRequest = async (
   >
 ) => {
   try {
-    const playerEmail =
-      context.request.headers.get("Cf-Access-Authenticated-Player-Email") ||
-      "dan.v.dinh@gmail.com";
+    const playerEmail = context.request.headers.get(
+      "Cf-Access-Authenticated-Player-Email"
+    );
 
     const [
       playersResults,
