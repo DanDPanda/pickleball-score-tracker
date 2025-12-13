@@ -5,16 +5,13 @@ import {
   CardContent,
   Dialog,
   DialogTitle,
-  DialogContent,
   DialogActions,
-  TextField,
 } from "@mui/material";
 
-async function startNewWeekAction(games: number) {
+async function startNewWeekAction() {
   const response = await fetch("/api/weeks", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ games }),
   });
 
   if (!response.ok) {
@@ -42,15 +39,13 @@ export const FacilitatorInput = () => {
   const [isStartingWeek, setIsStartingWeek] = useState(false);
   const [isResettingSeason, setIsResettingSeason] = useState(false);
   const [showGameDialog, setShowGameDialog] = useState(false);
-  const [gameCount, setGameCount] = useState("3");
 
   const handleStartNewWeek = async () => {
     if (isStartingWeek) return;
 
     setIsStartingWeek(true);
     try {
-      const games = parseInt(gameCount) || 3;
-      await startNewWeekAction(games);
+      await startNewWeekAction();
       window.location.reload();
     } catch (error) {
       alert(
@@ -67,7 +62,6 @@ export const FacilitatorInput = () => {
 
   const handleCloseDialog = () => {
     setShowGameDialog(false);
-    setGameCount("3");
   };
 
   const handleResetSeason = async () => {
@@ -141,19 +135,6 @@ export const FacilitatorInput = () => {
 
       <Dialog open={showGameDialog} onClose={handleCloseDialog}>
         <DialogTitle>Start New Week</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Number of Games"
-            type="number"
-            fullWidth
-            value={gameCount}
-            onChange={(e) => setGameCount(e.target.value)}
-            inputProps={{ min: 1, max: 20 }}
-            sx={{ mt: 1 }}
-          />
-        </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button

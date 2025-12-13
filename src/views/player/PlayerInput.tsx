@@ -18,21 +18,23 @@ export const PlayerInput = () => {
 
     const obj: { [key: number]: { gameNumber: number; points: string } } = {};
 
-    for (let i = 0; i < activeWeek.games; i++) {
+    for (let i = 1; i <= 10; i++) {
       const existingScore = gameScores.find(
         (score) =>
           score.playerId === player.playerId &&
           score.weekId === activeWeek.weekId &&
-          score.gameNumber === i + 1 &&
+          score.gameNumber === i &&
           score.active
       );
-      obj[i + 1] = existingScore
+      obj[i] = existingScore
         ? {
             gameNumber: existingScore.gameNumber,
             points:
-              existingScore.points === 0 ? "" : existingScore.points.toString(),
+              existingScore.points === 0
+                ? "0"
+                : existingScore.points.toString(),
           }
-        : { gameNumber: i + 1, points: "" };
+        : { gameNumber: i, points: "0" };
     }
 
     return obj;
@@ -129,7 +131,7 @@ export const PlayerInput = () => {
             mb: 3,
           }}
         >
-          {Array.from({ length: activeWeek.games }, (_, index) => (
+          {Array.from({ length: 10 }, (_, index) => (
             <Box
               key={index}
               sx={{

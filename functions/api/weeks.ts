@@ -92,18 +92,12 @@ export const onRequestPost = async (
     ]);
 
     const uuid = crypto.randomUUID();
-    const body: { games: number } = await context.request.json();
 
     await context.env.pickleball_score_tracker_database
       .prepare(
-        "INSERT INTO Weeks (weekId, weekNumber, startDate, active, games) VALUES (?, ?, ?, true, ?)"
+        "INSERT INTO Weeks (weekId, weekNumber, startDate, active) VALUES (?, ?, ?, true)"
       )
-      .bind(
-        uuid,
-        activeWeek.weekNumber + 1,
-        new Date().toISOString(),
-        body.games
-      )
+      .bind(uuid, activeWeek.weekNumber + 1, new Date().toISOString())
       .run();
 
     return new Response(

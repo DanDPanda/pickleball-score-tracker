@@ -13,8 +13,7 @@ CREATE TABLE IF NOT EXISTS Weeks (
     weekId TEXT PRIMARY KEY NOT NULL,
     weekNumber INTEGER NOT NULL,
     startDate TEXT NOT NULL,
-    active BOOLEAN NOT NULL,
-    games INTEGER DEFAULT 4
+    active BOOLEAN NOT NULL
 );
 CREATE TABLE IF NOT EXISTS WeeklyScores (
     weeklyScoreId TEXT PRIMARY KEY NOT NULL,
@@ -42,10 +41,10 @@ insert into Players (playerId, email, facilitator) values
     ("12231dbe-29d3-4295-821e-3b9186fdc136", "test@gmail.com", false),
     ("a3c45e67-89ab-4def-0123-456789abcdef", "player3@gmail.com", false),
     ("a3c45e67-89ab-4def-0123-456789abcdeg", "player4@gmail.com", false);
-insert into Weeks (weekId, weekNumber, startDate, active, games) values 
-    ('21972fac-1dcc-47c5-b137-a80b54855df4', 1, '2024-01-01', false, 4), 
-    ('f023f7a2-350f-4154-881a-4d4b3c720b59', 2, '2024-01-08', false, 4),
-    ('f023f7a2-350f-4154-881a-4d4b3c720b50', 3, '2024-01-15', true, 4);
+insert into Weeks (weekId, weekNumber, startDate, active) values 
+    ('21972fac-1dcc-47c5-b137-a80b54855df4', 1, '2024-01-01', false), 
+    ('f023f7a2-350f-4154-881a-4d4b3c720b59', 2, '2024-01-08', false),
+    ('f023f7a2-350f-4154-881a-4d4b3c720b50', 3, '2024-01-15', true);
 insert into WeeklyScores (weeklyScoreId, playerId, weekId, weekNumber, points) values 
     ('68d756f8-03ad-417a-9f34-5e6096bcaab0', '0f605319-b206-41f2-9a5a-6c9fd2820387', '21972fac-1dcc-47c5-b137-a80b54855df4', 1, 10), 
     ('b81cc8fc-3ab3-433e-a5c6-f9da61d70509', '0f605319-b206-41f2-9a5a-6c9fd2820387', 'f023f7a2-350f-4154-881a-4d4b3c720b59', 2, 15),
