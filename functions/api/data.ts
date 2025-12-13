@@ -10,13 +10,8 @@ export const onRequest = async (
   >
 ) => {
   try {
-    console.log("context.request.headers :>> ", context.request.headers);
-    console.log(
-      "context.request.headers :>> ",
-      context.request.headers.get("Cf-Access-Authenticated-Player-Email")
-    );
     const playerEmail = context.request.headers.get(
-      "Cf-Access-Authenticated-Player-Email"
+      "Cf-Access-Authenticated-User-Email"
     );
 
     const [
