@@ -1,12 +1,6 @@
 import { useState } from "react";
-import {
-  Button,
-  Card,
-  CardContent,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-} from "@mui/material";
+import { Button, Card, CardContent } from "@mui/material";
+import { ConfirmationPopup } from "../../components/ConfirmationPopup";
 
 async function startNewWeekAction() {
   const response = await fetch("/api/weeks", {
@@ -38,7 +32,8 @@ async function resetSeasonAction() {
 export const FacilitatorInput = () => {
   const [isStartingWeek, setIsStartingWeek] = useState(false);
   const [isResettingSeason, setIsResettingSeason] = useState(false);
-  const [showGameDialog, setShowGameDialog] = useState(false);
+  const [showNewWeekDialog, setShowNewWeekDialog] = useState(false);
+  const [showResetSeasonDialog, setShowResetSeasonDialog] = useState(false);
 
   const handleStartNewWeek = async () => {
     if (isStartingWeek) return;
@@ -52,28 +47,28 @@ export const FacilitatorInput = () => {
         error instanceof Error ? error.message : "Failed to start new week"
       );
       setIsStartingWeek(false);
-      setShowGameDialog(false);
+      setShowNewWeekDialog(false);
     }
   };
 
-  const handleOpenDialog = () => {
-    setShowGameDialog(true);
+  const handleOpenNewWeekDialog = () => {
+    setShowNewWeekDialog(true);
   };
 
-  const handleCloseDialog = () => {
-    setShowGameDialog(false);
+  const handleCloseNewWeekDialog = () => {
+    setShowNewWeekDialog(false);
+  };
+
+  const handleOpenResetSeasonDialog = () => {
+    setShowResetSeasonDialog(true);
+  };
+
+  const handleCloseResetSeasonDialog = () => {
+    setShowResetSeasonDialog(false);
   };
 
   const handleResetSeason = async () => {
     if (isResettingSeason) return;
-
-    if (
-      !confirm(
-        "Are you sure you want to reset the season? This will delete all weeks and scores!"
-      )
-    ) {
-      return;
-    }
 
     setIsResettingSeason(true);
     try {
@@ -82,6 +77,7 @@ export const FacilitatorInput = () => {
     } catch (error) {
       alert(error instanceof Error ? error.message : "Failed to reset season");
       setIsResettingSeason(false);
+      setShowResetSeasonDialog(false);
     }
   };
 
@@ -102,7 +98,7 @@ export const FacilitatorInput = () => {
             variant="contained"
             color="primary"
             size="large"
-            onClick={handleOpenDialog}
+            onClick={handleOpenNewWeekDialog}
             disabled={isStartingWeek}
             sx={{
               py: 1.5,
@@ -119,7 +115,7 @@ export const FacilitatorInput = () => {
             variant="contained"
             color="secondary"
             size="large"
-            onClick={handleResetSeason}
+            onClick={handleOpenResetSeasonDialog}
             disabled={isResettingSeason}
             sx={{
               py: 1.5,
@@ -133,19 +129,27 @@ export const FacilitatorInput = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={showGameDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Start New Week</DialogTitle>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button
-            onClick={handleStartNewWeek}
-            variant="contained"
-            disabled={isStartingWeek}
-          >
-            {isStartingWeek ? "Starting..." : "Start Week"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmationPopup
+        open={showNewWeekDialog}
+        title="Start New Week"
+        message="This will submit all currently pending scores from the users and start a new week!"
+        onClose={handleCloseNewWeekDialog}
+        onConfirm={handleStartNewWeek}
+        confirmText="Start Week"
+        isProcessing={isStartingWeek}
+        processingText="Starting..."
+      />
+
+      <ConfirmationPopup
+        open={showResetSeasonDialog}
+        title="Reset Season"
+        message="Are you sure you want to reset the season? This set the weeks and scores to 0!"
+        onClose={handleCloseResetSeasonDialog}
+        onConfirm={handleResetSeason}
+        confirmText="Reset Season"
+        isProcessing={isResettingSeason}
+        processingText="Resetting..."
+      />
     </>
   );
 };
