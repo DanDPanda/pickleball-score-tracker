@@ -16,7 +16,11 @@ export const GameScoresTab = () => {
   const { gameScores, players } = useData();
 
   const previousGameScores = gameScores.filter(
-    (gameScore) => gameScore.previous
+    (gameScore, index) =>
+      gameScore.previous &&
+      gameScores
+        .filter((gs) => gs.gameNumber === index + 1)
+        .every((g) => g.points !== 0)
   );
 
   if (previousGameScores.length === 0) {

@@ -4,6 +4,7 @@ import { GameScore } from "../../src/types/GameScore";
 interface ScoreBody {
   playerId: string;
   gameScores: GameScore[];
+  activeWeekId: string;
 }
 
 export const onRequestPost = async (
@@ -17,7 +18,7 @@ export const onRequestPost = async (
   try {
     const body: ScoreBody = await context.request.json();
 
-    const { playerId, gameScores } = body;
+    const { playerId, gameScores, activeWeekId } = body;
 
     // Validate required fields
     if (!playerId || !gameScores) {
@@ -45,6 +46,18 @@ export const onRequestPost = async (
         .bind()
         .first(),
     ]);
+
+    if (activeWeek.weekId !== activeWeekId) {
+      return new Response(
+        JSON.stringify({
+          error: "Active week mismatch. Please refresh the page.",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
 
     if (activeGameScores) {
       const statements = gameScores.map((gameScore) => {

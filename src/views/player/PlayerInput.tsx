@@ -30,11 +30,9 @@ export const PlayerInput = () => {
         ? {
             gameNumber: existingScore.gameNumber,
             points:
-              existingScore.points === 0
-                ? "0"
-                : existingScore.points.toString(),
+              existingScore.points === 0 ? "" : existingScore.points.toString(),
           }
-        : { gameNumber: i, points: "0" };
+        : { gameNumber: i, points: "" };
     }
 
     return obj;
@@ -63,6 +61,7 @@ export const PlayerInput = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          activeWeekId: activeWeek.weekId,
           playerId: player.playerId,
           gameScores: Object.values(scores).map((score) => ({
             gameNumber: score.gameNumber,
@@ -158,6 +157,7 @@ export const PlayerInput = () => {
                 onChange={(e) => handleScoreChange(index + 1, e.target.value)}
                 size="small"
                 label="Points"
+                placeholder="0"
                 fullWidth
                 sx={{
                   maxWidth: { xs: "100%", sm: 200 },

@@ -13,7 +13,7 @@ import { GameScoresTab } from "./GameScoresTab";
 import { useData } from "../hooks/useData";
 
 export const UnifiedHeader = () => {
-  const { player, weeks, weeklyScores } = useData();
+  const { player, weeklyScores } = useData();
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -75,17 +75,8 @@ export const UnifiedHeader = () => {
                   },
                 }}
               >
-                <Tab label="Weekly Scores" />
-                {weeklyScores.length && (
-                  <Tab
-                    label={
-                      "Week " +
-                      ((weeks.find((week) => week.active)?.weekNumber || 0) -
-                        1) +
-                      " Scores"
-                    }
-                  />
-                )}
+                <Tab label="Season Scores" />
+                {weeklyScores.length && <Tab label={"Last Week's Scores"} />}
               </Tabs>
             </Box>
 

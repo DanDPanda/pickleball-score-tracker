@@ -10,7 +10,7 @@ import {
 import { useData } from "../hooks/useData";
 
 export const WeeklyScoresTab = () => {
-  const { weeklyScores, players } = useData();
+  const { weeklyScores, players, player } = useData();
 
   // Get unique week numbers from scores
   const weeks = [
@@ -41,7 +41,9 @@ export const WeeklyScoresTab = () => {
   });
 
   // Sort by total descending
-  playerScoresData.sort((a, b) => b.total - a.total);
+  playerScoresData.sort((a) =>
+    a.player.playerId === player.playerId ? -1 : 1
+  );
 
   return (
     <TableContainer
@@ -105,7 +107,6 @@ export const WeeklyScoresTab = () => {
                   whiteSpace: "nowrap",
                 }}
               >
-                {index === 0 ? "🏆 " : ""}
                 {item.player.email.split("@")[0]}
               </TableCell>
               {weeks.map((week) => (
@@ -128,7 +129,7 @@ export const WeeklyScoresTab = () => {
                   fontSize: "0.75rem",
                   fontWeight: "bold",
                   padding: "8px 6px",
-                  color: index === 0 ? "#d4af37" : "#1976d2",
+                  color: "#1976d2",
                 }}
               >
                 {item.total}
