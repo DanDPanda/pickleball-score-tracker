@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  Button,
-  Card,
-  CardContent,
-} from "@mui/material";
+import { Button, Card, CardContent } from "@mui/material";
 import { ConfirmationPopup } from "../../components/ConfirmationPopup";
 
 async function startNewWeekAction() {
@@ -136,6 +132,7 @@ export const FacilitatorInput = () => {
       <ConfirmationPopup
         open={showNewWeekDialog}
         title="Start New Week"
+        message="This will submit all currently pending scores from the users and start a new week!"
         onClose={handleCloseNewWeekDialog}
         onConfirm={handleStartNewWeek}
         confirmText="Start Week"
@@ -146,7 +143,7 @@ export const FacilitatorInput = () => {
       <ConfirmationPopup
         open={showResetSeasonDialog}
         title="Reset Season"
-        message="Are you sure you want to reset the season? This will delete all weeks and scores!"
+        message="Are you sure you want to reset the season? This set the weeks and scores to 0!"
         onClose={handleCloseResetSeasonDialog}
         onConfirm={handleResetSeason}
         confirmText="Reset Season"

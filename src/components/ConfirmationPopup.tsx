@@ -47,9 +47,13 @@ export const ConfirmationPopup = ({
         </IconButton>
       </Box>
       {message && <DialogContent>{message}</DialogContent>}
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onConfirm} variant="contained" disabled={isProcessing}>
+      <DialogActions sx={{ px: 3, pb: 3 }}>
+        <Button
+          onClick={onConfirm}
+          variant="contained"
+          disabled={isProcessing}
+          fullWidth
+        >
           {isProcessing ? processingText : confirmText}
         </Button>
       </DialogActions>
