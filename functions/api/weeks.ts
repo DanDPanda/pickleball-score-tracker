@@ -91,6 +91,9 @@ export const onRequestPost = async (
         .prepare("UPDATE Weeks SET active = false WHERE weekId = ?")
         .bind(activeWeek.weekId)
         .run(),
+    ]);
+
+    await Promise.all([
       await context.env.pickleball_score_tracker_database
         .prepare(
           "INSERT INTO Weeks (weekId, weekNumber, startDate, active) VALUES (?, ?, ?, true)"

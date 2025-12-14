@@ -130,39 +130,47 @@ export const PlayerInput = () => {
             mb: 3,
           }}
         >
-          {Array.from({ length: 10 }, (_, index) => (
+          {Array.from({ length: 5 }, (_, rowIndex) => (
             <Box
-              key={index}
+              key={rowIndex}
               sx={{
                 display: "flex",
-                alignItems: "center",
+                flexDirection: "row",
                 gap: 2,
-                flexDirection: { xs: "column", sm: "row" },
               }}
             >
-              <Typography
-                sx={{
-                  minWidth: { xs: "100%", sm: 100 },
-                  fontWeight: 500,
-                  color: "#333",
-                  textAlign: { xs: "left", sm: "left" },
-                  alignSelf: { xs: "flex-start", sm: "center" },
-                }}
-              >
-                Game {index + 1}:
-              </Typography>
-              <TextField
-                type="number"
-                value={scores[index + 1].points}
-                onChange={(e) => handleScoreChange(index + 1, e.target.value)}
-                size="small"
-                label="Points"
-                placeholder="0"
-                fullWidth
-                sx={{
-                  maxWidth: { xs: "100%", sm: 200 },
-                }}
-              />
+              {[rowIndex * 2 + 1, rowIndex * 2 + 2].map((gameNumber) => (
+                <Box
+                  key={gameNumber}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 0.5,
+                    flex: 1,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: 500,
+                      color: "#333",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    Game {gameNumber}
+                  </Typography>
+                  <TextField
+                    type="number"
+                    value={scores[gameNumber].points}
+                    onChange={(e) =>
+                      handleScoreChange(gameNumber, e.target.value)
+                    }
+                    size="small"
+                    label="Points"
+                    placeholder="0"
+                    fullWidth
+                  />
+                </Box>
+              ))}
             </Box>
           ))}
         </Box>

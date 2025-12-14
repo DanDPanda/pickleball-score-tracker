@@ -13,7 +13,7 @@ import { useData } from "../hooks/useData";
 import type { GameScore } from "../types/GameScore";
 
 export const GameScoresTab = () => {
-  const { gameScores, players } = useData();
+  const { gameScores, players, player } = useData();
 
   const previousGameScores = gameScores.filter(
     (gameScore, index) =>
@@ -37,13 +37,14 @@ export const GameScoresTab = () => {
   // For now, we'll display individual weekly scores as "games"
   const gameData = players.reduce((accum, player) => {
     accum[player.playerId] = {
+      playerId: player.playerId,
       name: player.email.split("@")[0],
       gameScores: previousGameScores
         .filter((score) => score.playerId === player.playerId)
         .sort((a, b) => a.gameNumber - b.gameNumber),
     };
     return accum;
-  }, {} as Record<string, { name: string; gameScores: GameScore[] }>);
+  }, {} as Record<string, { playerId: string; name: string; gameScores: GameScore[] }>);
 
   return (
     <TableContainer
@@ -82,31 +83,36 @@ export const GameScoresTab = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.values(gameData).map((item) => (
-            <TableRow key={item.name}>
-              <TableCell
-                sx={{
-                  fontSize: "0.8rem",
-                  padding: "8px 12px",
-                  color: "#666",
-                }}
-              >
-                {item.name}
-              </TableCell>
-              {item.gameScores.map((gameScore) => (
+          {Object.values(gameData)
+            .sort((a) => (a.playerId === player.playerId ? -1 : 1))
+            .map((data, index) => (
+              <TableRow key={data.name}>
                 <TableCell
-                  align="center"
                   sx={{
+                    fontWeight: index === 0 ? "bold" : "normal",
                     fontSize: "0.8rem",
                     padding: "8px 12px",
                     color: "#666",
+                    backgroundColor: index === 0 ? "#edfdedff" : "inherit",
                   }}
                 >
-                  {gameScore.points}
+                  {data.name}
                 </TableCell>
-              ))}
-            </TableRow>
-          ))}
+                {data.gameScores.map((gameScore) => (
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontSize: "0.8rem",
+                      padding: "8px 12px",
+                      color: "#666",
+                      backgroundColor: index === 0 ? "#edfdedff" : "inherit",
+                    }}
+                  >
+                    {gameScore.points}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>

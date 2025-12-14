@@ -105,6 +105,7 @@ export const WeeklyScoresTab = () => {
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
+                  backgroundColor: index === 0 ? "#edfdedff" : "inherit",
                 }}
               >
                 {item.player.email.split("@")[0]}
@@ -118,6 +119,7 @@ export const WeeklyScoresTab = () => {
                     padding: "8px 4px",
                     color: item.weekScores[week] > 0 ? "#1976d2" : "#999",
                     fontWeight: item.weekScores[week] > 0 ? "bold" : "normal",
+                    backgroundColor: index === 0 ? "#edfdedff" : "inherit",
                   }}
                 >
                   {item.weekScores[week] > 0 ? item.weekScores[week] : "-"}
@@ -130,6 +132,7 @@ export const WeeklyScoresTab = () => {
                   fontWeight: "bold",
                   padding: "8px 6px",
                   color: "#1976d2",
+                  backgroundColor: index === 0 ? "#edfdedff" : "inherit",
                 }}
               >
                 {item.total}
